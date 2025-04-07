@@ -14,6 +14,10 @@ struct CustomTextFieldWithErrorState: View {
     @Binding private var hasError: Bool?
     @FocusState private var focused: Bool
     private let placeholder: String
+    @Environment(\.colorScheme) var colorScheme
+    private var isDarkModeOn: Bool {
+        colorScheme == .dark
+    }
 
     // MARK: - Init
 
@@ -40,9 +44,6 @@ struct CustomTextFieldWithErrorState: View {
             Spacer()
             clearTextButton
         }
-        .onTapGesture {
-            focused = true
-        }
         .animation(.linear(duration: 0.2), value: focused)
         .frame(height: 50)
         .padding(.horizontal, 16)
@@ -55,6 +56,9 @@ struct CustomTextFieldWithErrorState: View {
                     lineWidth: hasError ?? false ? 3 : 2
                 )
                 .animation(.easeInOut(duration: 0.3), value: hasError)
+        }
+        .onTapGesture {
+            focused = true
         }
         .onChange(of: hasError ?? false, { _, newValue in
             if newValue {
@@ -71,6 +75,7 @@ struct CustomTextFieldWithErrorState: View {
 extension CustomTextFieldWithErrorState {
     private func textField(isActive: Bool) -> some View {
         TextField("", text: $text)
+            .foregroundStyle(.black)
             .frame(height: 24)
             .font(.system(size: 16, weight: .regular))
             .opacity(isActive ? 1 : 0)
@@ -100,6 +105,8 @@ extension CustomTextFieldWithErrorState {
             }
     }
 }
+
+// MARK: - Preview
 
 #Preview {
     struct CustomTextFieldPreview: View {

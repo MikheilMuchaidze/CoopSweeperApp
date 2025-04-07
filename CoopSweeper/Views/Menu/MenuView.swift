@@ -14,15 +14,24 @@ struct MenuView: View {
     // Navigation booleans
     @State private var presentCoopHintView = false
     @State private var presentGameDifficultyHintView = false
+    @State private var presentSettingsView = false
     @State private var startGame = false
-    @State private var showSettings = false
     // Player name validation
     @State private var userNameText: String = ""
     @State private var userNameHasError: Bool? = false
+    // Other UI Validation
+    @State private var showCustomDifficultySettings = false
     // Theme
     @Environment(\.colorScheme) var colorScheme
     private var isDarkModeOn: Bool {
         colorScheme == .dark
+    }
+    private let hapticFeedbackManager: HapticFeedbackManager
+
+    // MARK: - Init
+
+    init(hapticFeedbackManager: HapticFeedbackManager = DefaultHapticFeedbackManager()) {
+        self.hapticFeedbackManager = hapticFeedbackManager
     }
 
     // MARK: - Body
@@ -37,14 +46,19 @@ struct MenuView: View {
                 .padding(.horizontal, 20)
 
             gameModeChooser
-                .padding(.top, 20)
+                .padding(.top, 10)
                 .padding(.horizontal, 20)
 
-            gameDifficultyChooser
-                .padding(.top, 20)
-                .padding(.horizontal, 20)
+            ScrollView {
+                gameDifficultyChooser
+                    .padding(.top, 10)
+                    .padding(.horizontal, 20)
 
-            Spacer()
+                Spacer()
+            }
+            .scrollDismissesKeyboard(.immediately)
+            .scrollIndicators(.hidden)
+            .scrollDisabled(showCustomDifficultySettings ? false : true)
 
             startGameAndSettingsButton
                 .padding(.horizontal, 20)
@@ -67,7 +81,23 @@ struct MenuView: View {
         .sheet(isPresented: $presentGameDifficultyHintView, content: {
             EmptyView()
         })
+        .sheet(isPresented: $presentSettingsView, content: {
+            EmptyView()
+        })
         .animation(.easeInOut(duration: 0.3), value: settings.difficulty)
+        .onChange(of: settings.difficulty) { _, newValue in
+            if newValue == .custom {
+                showCustomDifficultySettings = true
+            } else {
+                showCustomDifficultySettings = false
+            }
+        }
+        .onChange(of: settings.gameMode) { _, _ in
+            hapticFeedbackManager.impact(style: .soft)
+        }
+        .onChange(of: settings.difficulty) { _, _ in
+            hapticFeedbackManager.impact(style: .soft)
+        }
     }
 }
 
@@ -88,7 +118,7 @@ extension MenuView {
 
     private var playerNameChooser: some View {
         VStack(alignment: .leading, spacing: 15) {
-            Text("Player Name")
+            Text("Player Name 🧹")
                 .font(.title2)
                 .bold()
 
@@ -103,16 +133,45 @@ extension MenuView {
         .cornerRadius(15)
     }
 
-    private var gameDifficultyChooser: some View {
+    private var gameModeChooser: some View {
         VStack(alignment: .leading, spacing: 15) {
             HStack {
-                Text("Game Difficulty")
+                Text("Coop mode 🤝")
                     .font(.title2)
                     .bold()
                 Spacer()
                 Image(systemName: "questionmark.circle.fill")
                     .foregroundColor(.blue)
                     .onTapGesture {
+                        hapticFeedbackManager.selection()
+                        presentCoopHintView.toggle()
+                    }
+            }
+
+            Picker("Select Game Mode", selection: $settings.gameMode) {
+                ForEach(GameMode.allCases, id: \.self) { gameMode in
+                    Text(gameMode.rawValue.capitalized)
+                        .tag(gameMode)
+                }
+            }
+            .pickerStyle(SegmentedPickerStyle())
+        }
+        .padding()
+        .background(Color.gray.opacity(0.2))
+        .cornerRadius(15)
+    }
+
+    private var gameDifficultyChooser: some View {
+        VStack(alignment: .leading, spacing: 15) {
+            HStack {
+                Text("Game Difficulty 💪")
+                    .font(.title2)
+                    .bold()
+                Spacer()
+                Image(systemName: "questionmark.circle.fill")
+                    .foregroundColor(.blue)
+                    .onTapGesture {
+                        hapticFeedbackManager.selection()
                         presentGameDifficultyHintView.toggle()
                     }
             }
@@ -172,39 +231,15 @@ extension MenuView {
         .transition(.move(edge: .bottom).combined(with: .opacity))
     }
 
-    private var gameModeChooser: some View {
-        VStack(alignment: .leading, spacing: 15) {
-            HStack {
-                Text("Coop mode")
-                    .font(.title2)
-                    .bold()
-                Spacer()
-                Image(systemName: "questionmark.circle.fill")
-                    .foregroundColor(.blue)
-                    .onTapGesture {
-                        presentCoopHintView.toggle()
-                    }
-            }
-
-            Picker("Select Game Mode", selection: $settings.gameMode) {
-                ForEach(GameMode.allCases, id: \.self) { gameMode in
-                    Text(gameMode.rawValue.capitalized)
-                        .tag(gameMode)
-                }
-            }
-            .pickerStyle(SegmentedPickerStyle())
-        }
-        .padding()
-        .background(Color.gray.opacity(0.2))
-        .cornerRadius(15)
-    }
-
     private var startGameButton: some View {
         Button {
             if userNameText.isEmpty {
                 userNameHasError = true
+                hapticFeedbackManager.notification(type: .error)
                 return
             }
+
+            hapticFeedbackManager.notification(type: .success)
             startGame.toggle()
         } label: {
             Text("Start Game")
@@ -222,7 +257,8 @@ extension MenuView {
 
     private var settingsButton: some View {
         Button {
-            showSettings.toggle()
+            hapticFeedbackManager.selection()
+            presentSettingsView.toggle()
         } label: {
             Image(systemName: "gear")
                 .frame(width: 30, height: 30)
