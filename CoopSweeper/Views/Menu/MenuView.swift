@@ -14,6 +14,7 @@ struct MenuView: View {
     @State private var startGame = false
     @State private var showSettings = false
     @State private var showClearHistoryAlert = false
+    @State private var nameTextfieldEmpty = true
 
     // MARK: - Body
 
@@ -24,6 +25,10 @@ struct MenuView: View {
                 .padding(.bottom, 20)
 
             playerNameChooser
+                .padding(.horizontal, 20)
+
+            gameModeChooser
+                .padding(.top, 20)
                 .padding(.horizontal, 20)
 
             gameDifficultyChooser
@@ -89,9 +94,14 @@ extension MenuView {
             TextField("Enter your name", text: $settings.playerName)
                 .textFieldStyle(.roundedBorder)
                 .font(.title3)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 5)
+                        .stroke(Color.red, lineWidth: 4)
+                        .cornerRadius(5)
+                }
         }
         .padding()
-        .background(Color.gray.opacity(0.1))
+        .background(Color.gray.opacity(0.2))
         .cornerRadius(15)
     }
 
@@ -115,7 +125,31 @@ extension MenuView {
             .pickerStyle(SegmentedPickerStyle())
         }
         .padding()
-        .background(Color.gray.opacity(0.1))
+        .background(Color.gray.opacity(0.2))
+        .cornerRadius(15)
+    }
+
+    private var gameModeChooser: some View {
+        VStack(alignment: .leading, spacing: 15) {
+            HStack {
+                Text("Coop mode")
+                    .font(.title2)
+                    .bold()
+                Spacer()
+                Image(systemName: "questionmark.circle.fill")
+                    .foregroundColor(.blue)
+            }
+
+            Picker("Select Game Mode", selection: $settings.gameMode) {
+                ForEach(GameMode.allCases, id: \.self) { gameMode in
+                    Text(gameMode.rawValue.capitalized)
+                        .tag(gameMode)
+                }
+            }
+            .pickerStyle(SegmentedPickerStyle())
+        }
+        .padding()
+        .background(Color.gray.opacity(0.2))
         .cornerRadius(15)
     }
 
@@ -144,7 +178,7 @@ extension MenuView {
             }
         }
         .padding()
-        .background(Color.gray.opacity(0.1))
+        .background(Color.gray.opacity(0.2))
         .cornerRadius(15)
     }
 
@@ -159,10 +193,10 @@ extension MenuView {
                 .frame(height: 30)
                 .frame(maxWidth: .infinity)
                 .padding()
-                .background(settings.isValid ? Color.blue : Color.gray)
+                .background(Color.green)
                 .cornerRadius(15)
+                .shadow(radius: 5)
         }
-        .disabled(!settings.isValid)
     }
 
     private var settingsButton: some View {

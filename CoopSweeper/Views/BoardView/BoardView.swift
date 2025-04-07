@@ -23,6 +23,8 @@ struct BoardView: View {
     @State private var startTime: Date?
     @State private var elapsedTime: TimeInterval = 0
     @State private var timer: Timer?
+    @State private var showGameResults = false
+    @State private var gameResults: GameResultsModel?
 
     // MARK: - Environment Properties
 
@@ -32,7 +34,6 @@ struct BoardView: View {
 
     init(gameSettings: GameSettings) {
         self.gameSettings = gameSettings
-        // Use default game settings (9x9 with 10 mines)
         _gameState = StateObject(wrappedValue: GameState())
     }
 
@@ -40,7 +41,7 @@ struct BoardView: View {
 
     var body: some View {
         VStack(spacing: 20) {
-            playerNameTimerMineCountAndDismissView
+            mineCountView
                 .padding(.horizontal)
 
             boardView
@@ -48,24 +49,53 @@ struct BoardView: View {
                 .cornerRadius(8)
                 .padding()
 
-            // Game status message
-            if gameState.gameOver {
-                Text("Game Over!")
-                    .font(.title)
-                    .foregroundColor(.red)
-            } else if gameState.gameWon {
-                Text("You Won!")
-                    .font(.title)
-                    .foregroundColor(.green)
-            }
+            Spacer()
 
-            resetButton
-                .padding()
+            timerView
+                .padding(.bottom, 20)
+
+            gameControlsView
+                .padding(.horizontal)
+                .padding(.bottom, 30)
         }
         .padding()
+        .navigationTitle(gameSettings.playerName)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    showGameResults = true
+                    gameResults = GameResultsModel(
+                        playerName: gameSettings.playerName,
+                        time: elapsedTime,
+                        minesFound: gameState.totalMines - gameState.remainingMines,
+                        totalMines: gameState.totalMines,
+                        gameWon: gameState.gameWon
+                    )
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.red)
+                }
+            }
+        }
         .preferredColorScheme(gameSettings.darkMode ? .dark : .light)
         .onDisappear {
             timer?.invalidate()
+        }
+        .alert("Game Results", isPresented: $showGameResults) {
+            Button("End Game") {
+                dismiss()
+            }
+        } message: {
+            if let results = gameResults {
+                Text("""
+                    Player: \(results.playerName)
+                    Time: \(formatTime(results.time))
+                    Mines Found: \(results.minesFound)/\(results.totalMines)
+                    Status: \(results.gameWon ? "Won! 🎉" : "Lost 😔")
+                    """)
+            }
         }
     }
 
@@ -96,23 +126,45 @@ struct BoardView: View {
 // MARK: - Body Components
 
 extension BoardView {
-    private var playerNameTimerMineCountAndDismissView: some View {
+    private var mineCountView: some View {
         HStack {
-            Text("Player: \(gameSettings.playerName)")
-                .font(.headline)
-            Spacer()
-            Text("Time: \(formatTime(elapsedTime))")
-                .font(.headline)
-                .monospacedDigit()
-            Spacer()
             Text("Mines: \(gameState.remainingMines)")
                 .font(.headline)
-            Spacer()
+                .foregroundColor(.primary)
+        }
+        .padding()
+        .background(Color.gray.opacity(0.1))
+        .cornerRadius(10)
+    }
+
+    private var timerView: some View {
+        VStack(spacing: 5) {
+            Text("Time")
+                .font(.headline)
+                .foregroundColor(.secondary)
+            
+            Text(formatTime(elapsedTime))
+                .font(.system(size: 48, weight: .bold, design: .monospaced))
+                .foregroundColor(.primary)
+        }
+        .padding()
+        .background(Color.gray.opacity(0.1))
+        .cornerRadius(15)
+    }
+
+    private var gameControlsView: some View {
+        HStack(spacing: 20) {
             Button {
-                dismiss()
+                gameState.resetGame()
+                resetTimer()
             } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.title2)
+                Label("New Game", systemImage: "arrow.clockwise")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .frame(height: 44)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.blue)
+                    .cornerRadius(15)
             }
         }
     }
@@ -141,16 +193,6 @@ extension BoardView {
                     }
                 }
             }
-        }
-    }
-
-    private var resetButton: some View {
-        Button {
-            gameState.resetGame()
-            resetTimer()
-        } label: {
-            Image(systemName: "arrow.clockwise")
-                .font(.title2)
         }
     }
 }

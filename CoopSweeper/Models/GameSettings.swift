@@ -13,8 +13,5 @@ final class GameSettings: ObservableObject {
     @Published var vibrationEnabled: Bool = true
     @Published var darkMode: Bool = false
     @Published var difficulty: GameDifficulty = .easy
-    
-    var isValid: Bool {
-        !playerName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-    }
+    @Published var gameMode: GameMode = .local
 } 

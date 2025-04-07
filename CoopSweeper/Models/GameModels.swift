@@ -14,6 +14,11 @@ enum GameDifficulty: String, CaseIterable {
     case custom = "Custom"
 }
 
+enum GameMode: String, CaseIterable {
+    case local = "Local"
+    case coop = "Coop"
+}
+
 struct Cell: Identifiable {
     let id = UUID()
     let row: Int
