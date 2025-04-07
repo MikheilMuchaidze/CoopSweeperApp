@@ -16,6 +16,9 @@ struct MenuView: View {
     @State private var showClearHistoryAlert = false
     @State private var nameTextfieldEmpty = true
 
+    @State private var userNameText: String = ""
+    @State private var userNameHasError: Bool? = false
+
     // MARK: - Body
 
     var body: some View {
@@ -44,6 +47,12 @@ struct MenuView: View {
             startGameAndSettingsButton
                 .padding(.horizontal, 20)
                 .padding(.bottom, 30)
+        }
+        .onAppear {
+            userNameText = ""
+        }
+        .onTapGesture {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
         .navigationDestination(isPresented: $startGame) {
             BoardView(
@@ -91,14 +100,11 @@ extension MenuView {
                 .font(.title2)
                 .bold()
 
-            TextField("Enter your name", text: $settings.playerName)
-                .textFieldStyle(.roundedBorder)
-                .font(.title3)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 5)
-                        .stroke(Color.red, lineWidth: 4)
-                        .cornerRadius(5)
-                }
+            CustomTextFieldWithErrorState(
+                text: $userNameText,
+                hasError: $userNameHasError,
+                placeholder: "Enter your name"
+            )
         }
         .padding()
         .background(Color.gray.opacity(0.2))
@@ -184,6 +190,10 @@ extension MenuView {
 
     private var startGameButton: some View {
         Button {
+            if userNameText.isEmpty {
+                userNameHasError = true
+                return
+            }
             startGame.toggle()
         } label: {
             Text("Start Game")
