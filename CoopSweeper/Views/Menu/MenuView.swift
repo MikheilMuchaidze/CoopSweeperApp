@@ -11,13 +11,19 @@ struct MenuView: View {
     // MARK: - Private Properties
 
     @StateObject private var settings = GameSettings()
+    // Navigation booleans
+    @State private var presentCoopHintView = false
+    @State private var presentGameDifficultyHintView = false
     @State private var startGame = false
     @State private var showSettings = false
-    @State private var showClearHistoryAlert = false
-    @State private var nameTextfieldEmpty = true
-
+    // Player name validation
     @State private var userNameText: String = ""
     @State private var userNameHasError: Bool? = false
+    // Theme
+    @Environment(\.colorScheme) var colorScheme
+    private var isDarkModeOn: Bool {
+        colorScheme == .dark
+    }
 
     // MARK: - Body
 
@@ -38,15 +44,11 @@ struct MenuView: View {
                 .padding(.top, 20)
                 .padding(.horizontal, 20)
 
-            gameHistorySection
-                .padding(.top, 20)
-                .padding(.horizontal, 20)
-
             Spacer()
 
             startGameAndSettingsButton
                 .padding(.horizontal, 20)
-                .padding(.bottom, 30)
+                .padding(.bottom, 20)
         }
         .onAppear {
             userNameText = ""
@@ -59,23 +61,13 @@ struct MenuView: View {
                 gameSettings: settings
             )
         }
-        .alert(
-            "Clear History",
-            isPresented: $showClearHistoryAlert
-        ) {
-            Button(
-                "Cancel",
-                role: .cancel
-            ) { }
-            Button(
-                "Clear",
-                role: .destructive
-            ) {
-                // TODO: Remove history
-            }
-        } message: {
-            Text("Are you sure you want to clear all game history?")
-        }
+        .sheet(isPresented: $presentCoopHintView, content: {
+            EmptyView()
+        })
+        .sheet(isPresented: $presentGameDifficultyHintView, content: {
+            EmptyView()
+        })
+        .animation(.easeInOut(duration: 0.3), value: settings.difficulty)
     }
 }
 
@@ -120,6 +112,9 @@ extension MenuView {
                 Spacer()
                 Image(systemName: "questionmark.circle.fill")
                     .foregroundColor(.blue)
+                    .onTapGesture {
+                        presentGameDifficultyHintView.toggle()
+                    }
             }
 
             Picker("Select Difficulty", selection: $settings.difficulty) {
@@ -129,10 +124,52 @@ extension MenuView {
                 }
             }
             .pickerStyle(SegmentedPickerStyle())
+
+            if settings.difficulty == .custom {
+                customDifficultySettings
+            }
         }
         .padding()
         .background(Color.gray.opacity(0.2))
         .cornerRadius(15)
+    }
+
+    private var customDifficultySettings: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Custom Settings")
+                .font(.headline)
+                .padding(.top, 5)
+            
+            HStack {
+                Text("Width:")
+                    .frame(width: 60, alignment: .leading)
+                Stepper("\(settings.customWidth)", value: $settings.customWidth, in: 5...30)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            
+            HStack {
+                Text("Height:")
+                    .frame(width: 60, alignment: .leading)
+                Stepper("\(settings.customHeight)", value: $settings.customHeight, in: 5...30)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            
+            HStack {
+                Text("Mines:")
+                    .frame(width: 60, alignment: .leading)
+                Stepper("\(settings.customMines)", value: $settings.customMines, in: 1...max(1, settings.customWidth * settings.customHeight - 1))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            
+            Text("Maximum mines: \(max(1, settings.customWidth * settings.customHeight - 1))")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 12)
+        .background(Color.gray.opacity(0.1))
+        .cornerRadius(8)
+        .transition(.move(edge: .bottom).combined(with: .opacity))
     }
 
     private var gameModeChooser: some View {
@@ -144,6 +181,9 @@ extension MenuView {
                 Spacer()
                 Image(systemName: "questionmark.circle.fill")
                     .foregroundColor(.blue)
+                    .onTapGesture {
+                        presentCoopHintView.toggle()
+                    }
             }
 
             Picker("Select Game Mode", selection: $settings.gameMode) {
@@ -153,35 +193,6 @@ extension MenuView {
                 }
             }
             .pickerStyle(SegmentedPickerStyle())
-        }
-        .padding()
-        .background(Color.gray.opacity(0.2))
-        .cornerRadius(15)
-    }
-
-    private var gameHistorySection: some View {
-        VStack(alignment: .leading, spacing: 15) {
-            HStack {
-                Text("Recent Games")
-                    .font(.title2)
-                    .bold()
-                Spacer()
-                Button {
-                    showClearHistoryAlert = true
-                } label: {
-                    Image(systemName: "trash")
-                        .foregroundColor(.red)
-                }
-            }
-
-            if true {
-                Text("No games played yet")
-                    .foregroundColor(.gray)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding()
-            } else {
-                // TODO: Add history rows
-            }
         }
         .padding()
         .background(Color.gray.opacity(0.2))
@@ -205,7 +216,7 @@ extension MenuView {
                 .padding()
                 .background(Color.green)
                 .cornerRadius(15)
-                .shadow(radius: 5)
+                .shadow(color: isDarkModeOn ? .white : .black, radius: 4)
         }
     }
 

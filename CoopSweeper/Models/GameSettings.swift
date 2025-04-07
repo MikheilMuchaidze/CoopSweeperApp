@@ -14,4 +14,42 @@ final class GameSettings: ObservableObject {
     @Published var darkMode: Bool = false
     @Published var difficulty: GameDifficulty = .easy
     @Published var gameMode: GameMode = .local
+    
+    // Custom difficulty settings
+    @Published var customWidth: Int = 9
+    @Published var customHeight: Int = 9
+    @Published var customMines: Int = 10
+    
+    // Computed property to check if settings are valid
+    var isValid: Bool {
+        !playerName.isEmpty
+    }
+    
+    // Get board dimensions based on difficulty
+    var boardWidth: Int {
+        switch difficulty {
+        case .easy: return 9
+        case .medium: return 16
+        case .hard: return 30
+        case .custom: return customWidth
+        }
+    }
+    
+    var boardHeight: Int {
+        switch difficulty {
+        case .easy: return 9
+        case .medium: return 16
+        case .hard: return 16
+        case .custom: return customHeight
+        }
+    }
+    
+    var mineCount: Int {
+        switch difficulty {
+        case .easy: return 10
+        case .medium: return 40
+        case .hard: return 99
+        case .custom: return customMines
+        }
+    }
 } 

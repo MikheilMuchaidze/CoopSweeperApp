@@ -34,7 +34,11 @@ struct BoardView: View {
 
     init(gameSettings: GameSettings) {
         self.gameSettings = gameSettings
-        _gameState = StateObject(wrappedValue: GameState())
+        _gameState = StateObject(wrappedValue: GameState(
+            rows: gameSettings.boardHeight,
+            columns: gameSettings.boardWidth,
+            mines: gameSettings.mineCount
+        ))
     }
 
     // MARK: - Body
