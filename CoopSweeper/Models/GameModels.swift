@@ -5,57 +5,28 @@
 //  Created by Mikheil Muchaidze on 06.04.25.
 //
 
-import Foundation
-
-enum GameDifficulty: String, CaseIterable {
-    case easy = "Easy"
-    case medium = "Medium"
-    case hard = "Hard"
-    case custom = "Custom"
-}
-
-enum GameMode: String, CaseIterable {
-    case local = "Local"
-    case coop = "Coop"
-}
-
-struct Cell: Identifiable {
-    let id = UUID()
-    let row: Int
-    let column: Int
-    var isMine: Bool
-    var state: CellState
-    var adjacentMines: Int
-    
-    var isRevealed: Bool {
-        state == .revealed
-    }
-    
-    var isFlagged: Bool {
-        state == .flagged
-    }
-}
+import SwiftUI
 
 final class GameState: ObservableObject {
     @Published var cells: [[Cell]]
     @Published var gameOver: Bool = false
     @Published var gameWon: Bool = false
     @Published var remainingMines: Int
-    
-    let rows: Int
-    let columns: Int
-    let totalMines: Int
-    
+
+    var rows: Int
+    var columns: Int
+    var totalMines: Int
+
     init(
-        rows: Int = 9,
-        columns: Int = 9,
-        mines: Int = 10
+        rows: Int,
+        columns: Int,
+        totalMines: Int
     ) {
         self.rows = rows
         self.columns = columns
-        self.totalMines = mines
-        self.remainingMines = mines
-        
+        self.totalMines = totalMines
+        self.remainingMines = totalMines
+
         // Initialize empty board
         var newCells: [[Cell]] = []
         for row in 0..<rows {

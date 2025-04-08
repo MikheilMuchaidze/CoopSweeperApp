@@ -12,6 +12,7 @@ struct CoopSweeperApp: App {
     // MARK: - Private Properties
 
     @State private var appSettingsManager = DefaultAppSettingsManager()
+    @State private var gameSettingsManager = DefaultGameSettingsManager()
     private let hapticFeedbackManager = DefaultHapticFeedbackManager()
 
     // MARK: - Body
@@ -24,6 +25,7 @@ struct CoopSweeperApp: App {
             }
             .environment(\.hapticFeedbackManager, hapticFeedbackManager)
             .environment(\.appSettingsManager, appSettingsManager)
+            .environment(\.gameSettingsManager, gameSettingsManager)
         }
     }
 }

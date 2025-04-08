@@ -6,14 +6,13 @@
 //
 
 import SwiftUI
-import Combine
 
 protocol AppSettingsManager {
     var soundEnabled: Bool { get }
     var vibrationEnabled: Bool { get }
     var theme: AppTheme { get }
 
-    func updateSettings(with update: SettingsUpdate)
+    func updateSettings(with update: AppSettingsUpdate)
 }
 
 @Observable
@@ -68,7 +67,7 @@ final class DefaultAppSettingsManager: AppSettingsManager {
 
     // MARK: - Methods
 
-    func updateSettings(with update: SettingsUpdate) {
+    func updateSettings(with update: AppSettingsUpdate) {
         switch update {
         case let .sound(isOn):
             soundEnabled = isOn
@@ -80,7 +79,7 @@ final class DefaultAppSettingsManager: AppSettingsManager {
     }
 }
 
-enum SettingsUpdate {
+enum AppSettingsUpdate {
     case sound(isOn: Bool)
     case vibrationEnabled(isOn: Bool)
     case theme(type: AppTheme)

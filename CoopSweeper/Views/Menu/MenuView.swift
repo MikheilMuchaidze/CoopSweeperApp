@@ -10,10 +10,10 @@ import SwiftUI
 struct MenuView: View {
     // MARK: - Private Properties
 
-    @StateObject private var settings = GameSettings()
     // Managers
     @Environment(\.hapticFeedbackManager) var hapticFeedbackManager
     @Environment(\.appSettingsManager) var appSettingsManager
+    @Environment(\.gameSettingsManager) var gameSettingsManager
     // Navigation booleans
     @State private var presentCoopHintView = false
     @State private var presentGameDifficultyHintView = false
@@ -67,7 +67,7 @@ struct MenuView: View {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
         .navigationDestination(isPresented: $startGame) {
-            BoardView(gameSettings: settings)
+            BoardView()
         }
         .sheet(isPresented: $presentCoopHintView, content: {
             GameModeHintView()
@@ -79,27 +79,27 @@ struct MenuView: View {
             SettingsView()
                 .preferredColorScheme(appSettingsManager.theme.colorScheme)
         })
-        .animation(.easeInOut(duration: 0.3), value: settings.difficulty)
-        .onChange(of: settings.difficulty) { _, newValue in
+        .animation(.easeInOut(duration: 0.3), value: gameSettingsManager.difficulty)
+        .onChange(of: gameSettingsManager.difficulty) { _, newValue in
             if newValue == .custom {
                 showCustomDifficultySettings = true
             } else {
                 showCustomDifficultySettings = false
             }
         }
-        .onChange(of: settings.gameMode) { _, _ in
+        .onChange(of: gameSettingsManager.gameMode) { _, _ in
             hapticFeedbackManager.impact(style: .soft)
         }
-        .onChange(of: settings.difficulty) { _, _ in
+        .onChange(of: gameSettingsManager.difficulty) { _, _ in
             hapticFeedbackManager.impact(style: .soft)
         }
-        .onChange(of: settings.customWidth) { _, _ in
+        .onChange(of: gameSettingsManager.customWidth) { _, _ in
             hapticFeedbackManager.impact(style: .soft)
         }
-        .onChange(of: settings.customHeight) { _, _ in
+        .onChange(of: gameSettingsManager.customHeight) { _, _ in
             hapticFeedbackManager.impact(style: .soft)
         }
-        .onChange(of: settings.customMines) { _, _ in
+        .onChange(of: gameSettingsManager.customMines) { _, _ in
             hapticFeedbackManager.impact(style: .soft)
         }
     }
@@ -152,7 +152,11 @@ extension MenuView {
                     }
             }
 
-            Picker("Select Game Mode", selection: $settings.gameMode) {
+            Picker("Select Game Mode", selection: .init(get: {
+                gameSettingsManager.gameMode
+            }, set: { newGameModeValue in
+                gameSettingsManager.updateGameSettings(with: .mode(newGameModeValue))
+            })) {
                 ForEach(GameMode.allCases, id: \.self) { gameMode in
                     Text(gameMode.rawValue.capitalized)
                         .tag(gameMode)
@@ -180,7 +184,11 @@ extension MenuView {
                     }
             }
 
-            Picker("Select Difficulty", selection: $settings.difficulty) {
+            Picker("Select Difficulty", selection: .init(get: {
+                gameSettingsManager.difficulty
+            }, set: { newDifficultyValue in
+                gameSettingsManager.updateGameSettings(with: .difficulty(newDifficultyValue))
+            })) {
                 ForEach(GameDifficulty.allCases, id: \.self) { difficulty in
                     Text(difficulty.rawValue.capitalized)
                         .tag(difficulty)
@@ -188,7 +196,7 @@ extension MenuView {
             }
             .pickerStyle(SegmentedPickerStyle())
 
-            if settings.difficulty == .custom {
+            if gameSettingsManager.difficulty == .custom {
                 customDifficultySettings
             }
         }
@@ -206,25 +214,37 @@ extension MenuView {
             HStack {
                 Text("Width:")
                     .frame(width: 60, alignment: .leading)
-                Stepper("\(settings.customWidth)", value: $settings.customWidth, in: 5...30)
+                Stepper("\(gameSettingsManager.customWidth)", value: .init(get: {
+                    gameSettingsManager.customWidth
+                }, set: { newCustomWidth in
+                    gameSettingsManager.updateGameSettings(with: .customWidth(newCustomWidth))
+                }), in: 5...30)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             
             HStack {
                 Text("Height:")
                     .frame(width: 60, alignment: .leading)
-                Stepper("\(settings.customHeight)", value: $settings.customHeight, in: 5...30)
+                Stepper("\(gameSettingsManager.customHeight)", value: .init(get: {
+                    gameSettingsManager.customHeight
+                }, set: { newCustomHeight in
+                    gameSettingsManager.updateGameSettings(with: .customHeight(newCustomHeight))
+                }), in: 5...30)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             
             HStack {
                 Text("Mines:")
                     .frame(width: 60, alignment: .leading)
-                Stepper("\(settings.customMines)", value: $settings.customMines, in: 1...max(1, settings.customWidth * settings.customHeight - 1))
+                Stepper("\(gameSettingsManager.customMines)", value: .init(get: {
+                    gameSettingsManager.customMines
+                }, set: { newCustomMines in
+                    gameSettingsManager.updateGameSettings(with: .customMines(newCustomMines))
+                }), in: 1...max(1, gameSettingsManager.customWidth * gameSettingsManager.customHeight - 1))
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             
-            Text("Maximum mines: \(max(1, settings.customWidth * settings.customHeight - 1))")
+            Text("Maximum mines: \(max(1, gameSettingsManager.customWidth * gameSettingsManager.customHeight - 1))")
                 .font(.caption)
                 .foregroundColor(.secondary)
         }

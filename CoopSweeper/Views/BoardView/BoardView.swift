@@ -11,12 +11,16 @@ import Combine
 struct BoardView: View {
     // MARK: - Private Properties
 
-    private let gameSettings: GameSettings
     @Environment(\.appSettingsManager) var appSettingsManager
+    @Environment(\.gameSettingsManager) var gameSettingsManager
 
     // MARK: - StateObject Properties
 
-    @StateObject private var gameState: GameState
+    @StateObject private var gameState = GameState(
+        rows: 10,
+        columns: 10,
+        totalMines: 10
+    )
 
     // MARK: - State Properties
 
@@ -30,17 +34,6 @@ struct BoardView: View {
     // MARK: - Environment Properties
 
     @Environment(\.dismiss) private var dismiss
-
-    // MARK: - Init
-
-    init(gameSettings: GameSettings) {
-        self.gameSettings = gameSettings
-        _gameState = StateObject(wrappedValue: GameState(
-            rows: gameSettings.boardHeight,
-            columns: gameSettings.boardWidth,
-            mines: gameSettings.mineCount
-        ))
-    }
 
     // MARK: - Body
 
@@ -64,7 +57,7 @@ struct BoardView: View {
                 .padding(.bottom, 30)
         }
         .padding()
-        .navigationTitle(gameSettings.playerName)
+        .navigationTitle(gameSettingsManager.playerName)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbar {
@@ -72,7 +65,7 @@ struct BoardView: View {
                 Button {
                     showGameResults = true
                     gameResults = GameResultsModel(
-                        playerName: gameSettings.playerName,
+                        playerName: gameSettingsManager.playerName,
                         time: elapsedTime,
                         minesFound: gameState.totalMines - gameState.remainingMines,
                         totalMines: gameState.totalMines,
@@ -205,8 +198,7 @@ extension BoardView {
 // MARK: - Preview
 
 #Preview {
-    BoardView(
-        gameSettings: GameSettings()
-    )
-    .environment(\.appSettingsManager, DefaultAppSettingsManager())
+    BoardView()
+        .environment(\.appSettingsManager, DefaultAppSettingsManager())
+        .environment(\.gameSettingsManager, DefaultGameSettingsManager())
 }
