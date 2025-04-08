@@ -127,9 +127,9 @@ extension MenuView {
 
     private var playerNameChooser: some View {
         VStack(alignment: .leading, spacing: 15) {
-            Text("Player Name 🧹")
-                .font(.title2)
-                .bold()
+            Label("Player Name", systemImage: "person.fill")
+                .font(.title2.weight(.bold))
+                .foregroundStyle(.primary)
 
             CustomTextFieldWithErrorState(
                 text: $userNameText,
@@ -145,9 +145,9 @@ extension MenuView {
     private var gameModeChooser: some View {
         VStack(alignment: .leading, spacing: 15) {
             HStack {
-                Text("Coop mode 🤝")
-                    .font(.title2)
-                    .bold()
+                Label("Game Mode", systemImage: "person.2.fill")
+                    .font(.title2.weight(.bold))
+                    .foregroundStyle(.primary)
                 Spacer()
                 Image(systemName: "questionmark.circle.fill")
                     .foregroundColor(.blue)
@@ -173,9 +173,9 @@ extension MenuView {
     private var gameDifficultyChooser: some View {
         VStack(alignment: .leading, spacing: 15) {
             HStack {
-                Text("Game Difficulty 💪")
-                    .font(.title2)
-                    .bold()
+                Label("Difficulty", systemImage: "chart.bar.fill")
+                    .font(.title2.weight(.bold))
+                    .foregroundStyle(.primary)
                 Spacer()
                 Image(systemName: "questionmark.circle.fill")
                     .foregroundColor(.blue)
@@ -251,16 +251,19 @@ extension MenuView {
             hapticFeedbackManager.notification(type: .success)
             startGame.toggle()
         } label: {
-            Text("Start Game")
-                .font(.title3)
-                .bold()
-                .foregroundColor(.white)
-                .frame(height: 30)
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.green)
-                .cornerRadius(15)
-                .shadow(color: isDarkModeOn ? .white : .black, radius: 2)
+            HStack {
+                Text("Start Game")
+                    .font(.title3.weight(.semibold))
+                Image(systemName: "play.fill")
+            }
+            .font(.title3)
+            .foregroundColor(.white)
+            .frame(height: 30)
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(Color.green)
+            .cornerRadius(15)
+            .shadow(color: isDarkModeOn ? .white : .black, radius: 2)
         }
     }
 
