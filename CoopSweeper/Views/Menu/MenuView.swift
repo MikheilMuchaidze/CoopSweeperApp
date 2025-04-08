@@ -11,7 +11,9 @@ struct MenuView: View {
     // MARK: - Private Properties
 
     @StateObject private var settings = GameSettings()
-    @StateObject private var appSettings = AppSettings()
+    // Managers
+    @Environment(\.hapticFeedbackManager) var hapticFeedbackManager
+    @Environment(\.appSettingsManager) var appSettingsManager
     // Navigation booleans
     @State private var presentCoopHintView = false
     @State private var presentGameDifficultyHintView = false
@@ -26,13 +28,6 @@ struct MenuView: View {
     @Environment(\.colorScheme) var colorScheme
     private var isDarkModeOn: Bool {
         colorScheme == .dark
-    }
-    private let hapticFeedbackManager: HapticFeedbackManager
-
-    // MARK: - Init
-
-    init(hapticFeedbackManager: HapticFeedbackManager = DefaultHapticFeedbackManager()) {
-        self.hapticFeedbackManager = hapticFeedbackManager
     }
 
     // MARK: - Body
@@ -72,10 +67,7 @@ struct MenuView: View {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
         .navigationDestination(isPresented: $startGame) {
-            BoardView(
-                gameSettings: settings,
-                appSettings: appSettings
-            )
+            BoardView(gameSettings: settings)
         }
         .sheet(isPresented: $presentCoopHintView, content: {
             GameModeHintView()
@@ -298,5 +290,7 @@ extension MenuView {
 #Preview {
     NavigationStack {
         MenuView()
+            .environment(\.appSettingsManager, DefaultAppSettingsManager())
+            .environment(\.hapticFeedbackManager, DefaultHapticFeedbackManager())
     }
 }

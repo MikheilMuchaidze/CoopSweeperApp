@@ -13,15 +13,5 @@ final class AppSettings: ObservableObject {
     @Published var soundEnabled: Bool = true
     @Published var vibrationEnabled: Bool = true
     @Published var darkMode: Bool = false
-    @Published var theme: AppTheme = .system {
-        didSet {
-            print(theme.rawValue)
-        }
-    }
-}
-
-enum AppTheme: String, CaseIterable {
-    case light = "Light"
-    case dark = "Dark"
-    case system = "System"
+    @Published var theme: AppTheme = .system
 }

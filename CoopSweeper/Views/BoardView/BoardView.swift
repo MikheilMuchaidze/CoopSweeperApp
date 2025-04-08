@@ -12,7 +12,7 @@ struct BoardView: View {
     // MARK: - Private Properties
 
     private let gameSettings: GameSettings
-    private let appSettings: AppSettings
+    @Environment(\.appSettingsManager) var appSettingsManager
 
     // MARK: - StateObject Properties
 
@@ -33,12 +33,8 @@ struct BoardView: View {
 
     // MARK: - Init
 
-    init(
-        gameSettings: GameSettings,
-        appSettings: AppSettings
-    ) {
+    init(gameSettings: GameSettings) {
         self.gameSettings = gameSettings
-        self.appSettings = appSettings
         _gameState = StateObject(wrappedValue: GameState(
             rows: gameSettings.boardHeight,
             columns: gameSettings.boardWidth,
@@ -88,7 +84,7 @@ struct BoardView: View {
                 }
             }
         }
-        .preferredColorScheme(appSettings.darkMode ? .dark : .light)
+        .preferredColorScheme(appSettingsManager.theme == .dark ? .dark : .light)
         .onDisappear {
             timer?.invalidate()
         }
@@ -188,13 +184,13 @@ extension BoardView {
                                 if gameState.cells[row][column].state == .hidden {
                                     startTimer()
                                 }
-                                if appSettings.vibrationEnabled {
+                                if appSettingsManager.vibrationEnabled {
                                     // Add vibration feedback
                                 }
                                 gameState.revealCell(row: row, column: column)
                             }
                             .onLongPressGesture {
-                                if appSettings.vibrationEnabled {
+                                if appSettingsManager.vibrationEnabled {
                                     // Add vibration feedback
                                 }
                                 gameState.toggleFlag(row: row, column: column)
@@ -210,7 +206,7 @@ extension BoardView {
 
 #Preview {
     BoardView(
-        gameSettings: GameSettings(),
-        appSettings: AppSettings()
+        gameSettings: GameSettings()
     )
+    .environment(\.appSettingsManager, DefaultAppSettingsManager())
 }

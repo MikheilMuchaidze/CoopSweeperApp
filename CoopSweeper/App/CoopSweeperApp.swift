@@ -9,6 +9,11 @@ import SwiftUI
 
 @main
 struct CoopSweeperApp: App {
+    // MARK: - Private Properties
+
+    @State private var appSettingsManager = DefaultAppSettingsManager()
+    private let hapticFeedbackManager = DefaultHapticFeedbackManager()
+
     // MARK: - Body
 
     var body: some Scene {
@@ -17,6 +22,8 @@ struct CoopSweeperApp: App {
                 MenuView()
             }
             .frame(minWidth: 400, minHeight: 600)
+            .environment(\.hapticFeedbackManager, hapticFeedbackManager)
+            .environment(\.appSettingsManager, appSettingsManager)
         }
     }
 }

@@ -1,17 +1,13 @@
 import SwiftUI
 
 struct SettingsView: View {
+    // MARK: - Private Properties
+
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.colorScheme) var colorScheme
-    @AppStorage("soundEnabled") private var soundEnabled = true
-    @AppStorage("hapticEnabled") private var hapticEnabled = true
+    @Environment(\.appSettingsManager) private var appSettingsManager
 
-    @StateObject private var appSettings = AppSettings()
+    // MARK: - Body
 
-    private var isDarkModeOn: Bool {
-        colorScheme == .dark
-    }
-    
     var body: some View {
         NavigationStack {
             List {
@@ -38,13 +34,23 @@ struct SettingsView: View {
 extension SettingsView {
     private var gameSettingsSection: some View {
         Section(header: Text("Game Settings")) {
-            Toggle("Sound Effects", isOn: $soundEnabled)
-                .tint(.blue)
+            Toggle("Sound Effects", isOn: .init(get: {
+                appSettingsManager.soundEnabled
+            }, set: { newValueForSoundSetting in
+                appSettingsManager.updateSettings(with: .sound(isOn: newValueForSoundSetting))
+            }))
 
-            Toggle("Haptic Feedback", isOn: $hapticEnabled)
-                .tint(.blue)
+            Toggle("Haptic Feedback", isOn: .init(get: {
+                appSettingsManager.vibrationEnabled
+            }, set: { newValueForVibrationSetting in
+                appSettingsManager.updateSettings(with: .vibrationEnabled(isOn: newValueForVibrationSetting))
+            }))
 
-            Picker("Dark Mode", selection: $appSettings.theme) {
+            Picker("Dark Mode", selection: .init(get: {
+                appSettingsManager.theme
+            }, set: { newValueForDarkModeSetting in
+                appSettingsManager.updateSettings(with: .theme(type: newValueForDarkModeSetting))
+            })) {
                 ForEach(AppTheme.allCases, id: \.self) { appTheme in
                     Text(appTheme.rawValue)
                         .tag(appTheme)
