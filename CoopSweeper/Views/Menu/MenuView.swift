@@ -98,6 +98,15 @@ struct MenuView: View {
         .onChange(of: settings.difficulty) { _, _ in
             hapticFeedbackManager.impact(style: .soft)
         }
+        .onChange(of: settings.customWidth) { _, _ in
+            hapticFeedbackManager.impact(style: .soft)
+        }
+        .onChange(of: settings.customHeight) { _, _ in
+            hapticFeedbackManager.impact(style: .soft)
+        }
+        .onChange(of: settings.customMines) { _, _ in
+            hapticFeedbackManager.impact(style: .soft)
+        }
     }
 }
 

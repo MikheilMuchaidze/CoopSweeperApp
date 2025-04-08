@@ -20,11 +20,6 @@ final class GameSettings: ObservableObject {
     @Published var customHeight: Int = 9
     @Published var customMines: Int = 10
     
-    // Computed property to check if settings are valid
-    var isValid: Bool {
-        !playerName.isEmpty
-    }
-    
     // Get board dimensions based on difficulty
     var boardWidth: Int {
         switch difficulty {
