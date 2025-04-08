@@ -110,7 +110,7 @@ extension MenuView {
                 .font(.system(size: 40, weight: .bold))
                 .foregroundColor(.blue)
 
-            Text("Challenge Your Mind")
+            Text("Challenge Your Mind 🚀")
                 .font(.title3)
                 .foregroundColor(.gray)
         }
@@ -251,7 +251,7 @@ extension MenuView {
                 .padding()
                 .background(Color.green)
                 .cornerRadius(15)
-                .shadow(color: isDarkModeOn ? .white : .black, radius: 4)
+                .shadow(color: isDarkModeOn ? .white : .black, radius: 2)
         }
     }
 
