@@ -20,8 +20,8 @@ struct CoopSweeperApp: App {
         WindowGroup {
             NavigationStack {
                 MenuView()
+                    .preferredColorScheme(appSettingsManager.theme.colorScheme)
             }
-            .frame(minWidth: 400, minHeight: 600)
             .environment(\.hapticFeedbackManager, hapticFeedbackManager)
             .environment(\.appSettingsManager, appSettingsManager)
         }

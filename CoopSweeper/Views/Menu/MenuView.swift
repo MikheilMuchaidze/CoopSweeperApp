@@ -77,6 +77,7 @@ struct MenuView: View {
         })
         .sheet(isPresented: $presentSettingsView, content: {
             SettingsView()
+                .preferredColorScheme(appSettingsManager.theme.colorScheme)
         })
         .animation(.easeInOut(duration: 0.3), value: settings.difficulty)
         .onChange(of: settings.difficulty) { _, newValue in
