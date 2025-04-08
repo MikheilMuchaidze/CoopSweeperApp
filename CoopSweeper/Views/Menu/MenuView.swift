@@ -67,7 +67,13 @@ struct MenuView: View {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
         .navigationDestination(isPresented: $startGame) {
-            BoardView()
+            BoardView(
+                gameEngineManager: DefaultGameEngineManager(
+                    rows: gameSettingsManager.boardHeight,
+                    columns: gameSettingsManager.boardWidth,
+                    totalMines: gameSettingsManager.mineCount
+                )
+            )
         }
         .sheet(isPresented: $presentCoopHintView, content: {
             GameModeHintView()

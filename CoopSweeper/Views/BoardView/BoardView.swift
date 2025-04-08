@@ -14,16 +14,9 @@ struct BoardView: View {
     @Environment(\.appSettingsManager) var appSettingsManager
     @Environment(\.gameSettingsManager) var gameSettingsManager
 
-    // MARK: - StateObject Properties
-
-    @StateObject private var gameState = GameState(
-        rows: 10,
-        columns: 10,
-        totalMines: 10
-    )
-
     // MARK: - State Properties
 
+    @State private var gameEngineManager: GameEngineManager
     @State private var cellSize: CGFloat = 35
     @State private var startTime: Date?
     @State private var elapsedTime: TimeInterval = 0
@@ -34,6 +27,12 @@ struct BoardView: View {
     // MARK: - Environment Properties
 
     @Environment(\.dismiss) private var dismiss
+
+    // MARK: - Init
+
+    init(gameEngineManager: GameEngineManager) {
+        self.gameEngineManager = gameEngineManager
+    }
 
     // MARK: - Body
 
@@ -67,9 +66,9 @@ struct BoardView: View {
                     gameResults = GameResultsModel(
                         playerName: gameSettingsManager.playerName,
                         time: elapsedTime,
-                        minesFound: gameState.totalMines - gameState.remainingMines,
-                        totalMines: gameState.totalMines,
-                        gameWon: gameState.gameWon
+                        minesFound: gameEngineManager.totalMines - gameEngineManager.remainingMines,
+                        totalMines: gameEngineManager.totalMines,
+                        gameWon: gameEngineManager.gameWon
                     )
                 } label: {
                     Image(systemName: "xmark.circle.fill")
@@ -126,7 +125,7 @@ struct BoardView: View {
 extension BoardView {
     private var mineCountView: some View {
         HStack {
-            Text("Mines: \(gameState.remainingMines)")
+            Text("Mines: \(gameEngineManager.remainingMines)")
                 .font(.headline)
                 .foregroundColor(.primary)
         }
@@ -153,7 +152,7 @@ extension BoardView {
     private var gameControlsView: some View {
         HStack(spacing: 20) {
             Button {
-                gameState.resetGame()
+                gameEngineManager.resetGame()
                 resetTimer()
             } label: {
                 Label("New Game", systemImage: "arrow.clockwise")
@@ -169,24 +168,24 @@ extension BoardView {
 
     private var boardView: some View {
         VStack(spacing: 0) {
-            ForEach(0..<gameState.rows, id: \.self) { row in
+            ForEach(0..<gameEngineManager.rows, id: \.self) { row in
                 HStack(spacing: 0) {
-                    ForEach(0..<gameState.columns, id: \.self) { column in
-                        CellView(cell: gameState.cells[row][column], size: cellSize)
+                    ForEach(0..<gameEngineManager.columns, id: \.self) { column in
+                        CellView(cell: gameEngineManager.cells[row][column], size: cellSize)
                             .onTapGesture {
-                                if gameState.cells[row][column].state == .hidden {
+                                if gameEngineManager.cells[row][column].state == .hidden {
                                     startTimer()
                                 }
                                 if appSettingsManager.vibrationEnabled {
                                     // Add vibration feedback
                                 }
-                                gameState.revealCell(row: row, column: column)
+                                gameEngineManager.revealCell(row: row, column: column)
                             }
                             .onLongPressGesture {
                                 if appSettingsManager.vibrationEnabled {
                                     // Add vibration feedback
                                 }
-                                gameState.toggleFlag(row: row, column: column)
+                                gameEngineManager.toggleFlag(row: row, column: column)
                             }
                     }
                 }
@@ -198,7 +197,13 @@ extension BoardView {
 // MARK: - Preview
 
 #Preview {
-    BoardView()
-        .environment(\.appSettingsManager, DefaultAppSettingsManager())
-        .environment(\.gameSettingsManager, DefaultGameSettingsManager())
+    BoardView(
+        gameEngineManager: DefaultGameEngineManager(
+            rows: 12,
+            columns: 12,
+            totalMines: 10
+        )
+    )
+    .environment(\.appSettingsManager, DefaultAppSettingsManager())
+    .environment(\.gameSettingsManager, DefaultGameSettingsManager())
 }
