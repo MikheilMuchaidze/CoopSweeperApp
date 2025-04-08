@@ -76,13 +76,13 @@ struct MenuView: View {
             )
         }
         .sheet(isPresented: $presentCoopHintView, content: {
-            EmptyView()
+            GameModeHintView()
         })
         .sheet(isPresented: $presentGameDifficultyHintView, content: {
-            EmptyView()
+            GameDifficultyHintView()
         })
         .sheet(isPresented: $presentSettingsView, content: {
-            EmptyView()
+            SettingsView()
         })
         .animation(.easeInOut(duration: 0.3), value: settings.difficulty)
         .onChange(of: settings.difficulty) { _, newValue in
