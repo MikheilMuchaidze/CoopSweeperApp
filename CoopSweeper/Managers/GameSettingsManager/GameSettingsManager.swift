@@ -24,6 +24,7 @@ protocol GameSettingsManager {
     func updateGameSettings(with update: GameSettingsUpdate)
 }
 
+@Observable
 final class DefaultGameSettingsManager: GameSettingsManager {
     // MARK: - Published Properties
 
