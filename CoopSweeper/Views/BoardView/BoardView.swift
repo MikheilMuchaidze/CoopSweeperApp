@@ -12,6 +12,7 @@ struct BoardView: View {
     // MARK: - Private Properties
 
     private let gameSettings: GameSettings
+    private let appSettings: AppSettings
 
     // MARK: - StateObject Properties
 
@@ -32,8 +33,12 @@ struct BoardView: View {
 
     // MARK: - Init
 
-    init(gameSettings: GameSettings) {
+    init(
+        gameSettings: GameSettings,
+        appSettings: AppSettings
+    ) {
         self.gameSettings = gameSettings
+        self.appSettings = appSettings
         _gameState = StateObject(wrappedValue: GameState(
             rows: gameSettings.boardHeight,
             columns: gameSettings.boardWidth,
@@ -83,7 +88,7 @@ struct BoardView: View {
                 }
             }
         }
-        .preferredColorScheme(gameSettings.darkMode ? .dark : .light)
+        .preferredColorScheme(appSettings.darkMode ? .dark : .light)
         .onDisappear {
             timer?.invalidate()
         }
@@ -183,13 +188,13 @@ extension BoardView {
                                 if gameState.cells[row][column].state == .hidden {
                                     startTimer()
                                 }
-                                if gameSettings.vibrationEnabled {
+                                if appSettings.vibrationEnabled {
                                     // Add vibration feedback
                                 }
                                 gameState.revealCell(row: row, column: column)
                             }
                             .onLongPressGesture {
-                                if gameSettings.vibrationEnabled {
+                                if appSettings.vibrationEnabled {
                                     // Add vibration feedback
                                 }
                                 gameState.toggleFlag(row: row, column: column)
@@ -205,6 +210,7 @@ extension BoardView {
 
 #Preview {
     BoardView(
-        gameSettings: GameSettings()
+        gameSettings: GameSettings(),
+        appSettings: AppSettings()
     )
 }

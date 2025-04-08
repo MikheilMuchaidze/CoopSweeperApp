@@ -11,6 +11,7 @@ struct MenuView: View {
     // MARK: - Private Properties
 
     @StateObject private var settings = GameSettings()
+    @StateObject private var appSettings = AppSettings()
     // Navigation booleans
     @State private var presentCoopHintView = false
     @State private var presentGameDifficultyHintView = false
@@ -72,7 +73,8 @@ struct MenuView: View {
         }
         .navigationDestination(isPresented: $startGame) {
             BoardView(
-                gameSettings: settings
+                gameSettings: settings,
+                appSettings: appSettings
             )
         }
         .sheet(isPresented: $presentCoopHintView, content: {

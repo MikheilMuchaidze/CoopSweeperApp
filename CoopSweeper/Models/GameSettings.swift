@@ -8,10 +8,9 @@
 import Foundation
 
 final class GameSettings: ObservableObject {
+    // MARK: - Published Properties
+
     @Published var playerName: String = ""
-    @Published var soundEnabled: Bool = true
-    @Published var vibrationEnabled: Bool = true
-    @Published var darkMode: Bool = false
     @Published var difficulty: GameDifficulty = .easy
     @Published var gameMode: GameMode = .local
     
@@ -19,7 +18,9 @@ final class GameSettings: ObservableObject {
     @Published var customWidth: Int = 9
     @Published var customHeight: Int = 9
     @Published var customMines: Int = 10
-    
+
+    // MARK: - Properties
+
     // Get board dimensions based on difficulty
     var boardWidth: Int {
         switch difficulty {
