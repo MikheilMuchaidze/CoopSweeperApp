@@ -50,9 +50,37 @@ final class DefaultGameEngineManager: GameEngineManager {
         self.columns = columns
         self.totalMines = totalMines
         self.remainingMines = totalMines
+        initializeEmptyBoard()
     }
 
     // MARK: - Private Methods
+
+    private func initializeEmptyBoard() {
+        // Initialize empty board
+        var newCells: [[Cell]] = []
+        for row in 0..<rows {
+            var rowCells: [Cell] = []
+            for col in 0..<columns {
+                rowCells.append(
+                    Cell(
+                        row: row,
+                        column: col,
+                        isMine: false,
+                        state: .hidden,
+                        adjacentMines: 0
+                    )
+                )
+            }
+            newCells.append(rowCells)
+        }
+        self.cells = newCells
+
+        // Place mines randomly
+        placeMines()
+
+        // Calculate adjacent mines
+        calculateAdjacentMines()
+    }
 
     private func placeMines() {
         var minesPlaced = 0
