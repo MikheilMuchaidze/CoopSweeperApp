@@ -13,6 +13,7 @@ struct CustomTextFieldWithErrorState: View {
     @Binding private var text: String
     @Binding private var hasError: Bool?
     @FocusState private var focused: Bool
+    @State private var poppedOut: Bool = false
     private let placeholder: String
     @Environment(\.colorScheme) var colorScheme
     private var isDarkModeOn: Bool {
@@ -55,20 +56,25 @@ struct CustomTextFieldWithErrorState: View {
                     hasError ?? false ? .red : (focused ? .black.opacity(0.6) : .black.opacity(0.2)),
                     lineWidth: hasError ?? false ? 3 : 2
                 )
-                .animation(.easeInOut(duration: 0.3), value: hasError)
+                .animation(.easeInOut(duration: 0.5), value: hasError)
         }
         .onTapGesture {
             focused = true
         }
-        .onChange(of: hasError ?? false, { _, newValue in
+        .onChange(of: hasError ?? false) { _, newValue in
             if newValue {
-                Timer.scheduledTimer(withTimeInterval: 0.3, repeats: false) { _ in
+                withAnimation(.easeInOut(duration: 0.05)) {
+                    poppedOut = true
+                }
+                Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { _ in
                     withAnimation {
                         hasError = false
+                        poppedOut = false
                     }
                 }
             }
-        })
+        }
+        .scaleEffect(x: poppedOut ? 1.05 : 1, y: poppedOut ? 1.05 : 1, anchor: .center)
     }
 }
 
