@@ -11,11 +11,6 @@ struct GameModeHintView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    Text("Game Modes Guide")
-                        .font(.largeTitle)
-                        .bold()
-                        .padding(.bottom, 10)
-                    
                     modeSection(
                         title: "Local Mode",
                         description: "Play on your own device. Challenge yourself to clear the board without hitting any mines. Perfect for solo play and improving your skills.",
@@ -36,7 +31,8 @@ struct GameModeHintView: View {
                 }
                 .padding()
             }
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("Game Modes Guide")
+            .navigationBarTitleDisplayMode(.large)
             .presentationDragIndicator(.visible)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -58,39 +54,46 @@ extension GameModeHintView {
         icon: String,
         color: Color
     ) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Image(systemName: icon)
-                    .font(.title)
-                    .foregroundColor(color)
+        HStack {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Image(systemName: icon)
+                        .font(.title)
+                        .foregroundColor(color)
 
-                Text(title)
-                    .font(.title2)
-                    .bold()
+                    Text(title)
+                        .font(.title2)
+                        .bold()
+                }
+
+                Text(description)
+                    .font(.body)
+                    .foregroundColor(.secondary)
+                Spacer()
             }
-
-            Text(description)
-                .font(.body)
-                .foregroundColor(.secondary)
+            Spacer()
         }
         .padding()
-        .background(Color.gray.opacity(0.1))
+        .background(Color(uiColor: .systemGray5))
         .cornerRadius(12)
     }
 
     private var instructionView: some View {
-        VStack(alignment: .leading, spacing: 15) {
-            Text("How Coop Mode Works")
-                .font(.title2)
-                .bold()
+        HStack {
+            VStack(alignment: .leading, spacing: 15) {
+                Text("How Coop Mode Works")
+                    .font(.title2)
+                    .bold()
 
-            Text("1. Players take turns revealing cells on the board")
-            Text("2. If a player reveals a mine, the game ends")
-            Text("3. The goal is to work together to clear the entire board")
-            Text("4. Communication is essential - discuss your strategy!")
+                Text("1. Players take turns revealing cells on the board")
+                Text("2. If a player reveals a mine, the game ends")
+                Text("3. The goal is to work together to clear the entire board")
+                Text("4. Communication is essential - discuss your strategy!")
+            }
+            Spacer()
         }
         .padding()
-        .background(Color.gray.opacity(0.1))
+        .background(Color(uiColor: .systemGray5))
         .cornerRadius(12)
     }
 }

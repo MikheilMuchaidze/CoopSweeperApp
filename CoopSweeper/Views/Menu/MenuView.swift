@@ -139,8 +139,15 @@ extension MenuView {
             )
         }
         .padding()
-        .background(Color.gray.opacity(0.2))
-        .cornerRadius(15)
+        .background(
+            Rectangle()
+                .fill(Color(uiColor: .systemGray6))
+                .cornerRadius(12)
+                .shadow(
+                    color: isDarkModeOn ? .gray : .black,
+                    radius: 3
+                )
+        )
     }
 
     private var gameModeChooser: some View {
@@ -171,8 +178,15 @@ extension MenuView {
             .pickerStyle(SegmentedPickerStyle())
         }
         .padding()
-        .background(Color.gray.opacity(0.2))
-        .cornerRadius(15)
+        .background(
+            Rectangle()
+                .fill(Color(uiColor: .systemGray6))
+                .cornerRadius(12)
+                .shadow(
+                    color: isDarkModeOn ? .gray : .black,
+                    radius: 3
+                )
+        )
     }
 
     private var gameDifficultyChooser: some View {
@@ -207,8 +221,15 @@ extension MenuView {
             }
         }
         .padding()
-        .background(Color.gray.opacity(0.2))
-        .cornerRadius(15)
+        .background(
+            Rectangle()
+                .fill(Color(uiColor: .systemGray6))
+                .cornerRadius(12)
+                .shadow(
+                    color: isDarkModeOn ? .gray : .black,
+                    radius: 3
+                )
+        )
     }
 
     private var customDifficultySettings: some View {
@@ -256,9 +277,8 @@ extension MenuView {
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 12)
-        .background(Color.gray.opacity(0.1))
+        .background(Color(uiColor: .systemGray5))
         .cornerRadius(8)
-        .transition(.move(edge: .bottom).combined(with: .opacity))
     }
 
     private var startGameButton: some View {
@@ -284,7 +304,7 @@ extension MenuView {
             .padding()
             .background(Color.green)
             .cornerRadius(15)
-            .shadow(color: isDarkModeOn ? .white : .black, radius: 2)
+            .shadow(color: isDarkModeOn ? .white : .black, radius: 3)
         }
     }
 

@@ -11,11 +11,6 @@ struct GameDifficultyHintView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    Text("Game Difficulty Guide")
-                        .font(.largeTitle)
-                        .bold()
-                        .padding(.bottom, 10)
-                    
                     difficultySection(
                         title: "Easy",
                         description: "Perfect for beginners! A small board with few mines to help you learn the basics of the game.",
@@ -43,12 +38,13 @@ struct GameDifficultyHintView: View {
                         icon: "slider.horizontal.3",
                         color: .blue
                     )
-                    
+
                     Spacer()
                 }
                 .padding()
             }
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("Game Difficulty Guide")
+            .navigationBarTitleDisplayMode(.large)
             .presentationDragIndicator(.visible)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -70,23 +66,26 @@ extension GameDifficultyHintView {
         icon: String,
         color: Color
     ) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Image(systemName: icon)
-                    .font(.title)
-                    .foregroundColor(color)
+        HStack {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Image(systemName: icon)
+                        .font(.title)
+                        .foregroundColor(color)
 
-                Text(title)
-                    .font(.title2)
-                    .bold()
+                    Text(title)
+                        .font(.title2)
+                        .bold()
+                }
+
+                Text(description)
+                    .font(.body)
+                    .foregroundColor(.secondary)
             }
-
-            Text(description)
-                .font(.body)
-                .foregroundColor(.secondary)
+            Spacer()
         }
         .padding()
-        .background(Color.gray.opacity(0.1))
+        .background(Color(uiColor: .systemGray5))
         .cornerRadius(12)
     }
 }
