@@ -18,6 +18,7 @@ struct MenuView: View {
     @State private var presentCoopHintView = false
     @State private var presentGameDifficultyHintView = false
     @State private var presentSettingsView = false
+    @State private var presentGameHistoryView = false
     @State private var startGame = false
     // Player name validation
     @State private var userNameText: String = ""
@@ -35,19 +36,19 @@ struct MenuView: View {
     var body: some View {
         VStack(spacing: 0) {
             titleAndSubtitleView
-                .padding(.top)
+                .padding(.top, 0)
                 .padding(.bottom, 20)
 
             playerNameChooser
                 .padding(.horizontal, 20)
 
             gameModeChooser
-                .padding(.top, 10)
+                .padding(.top, 20)
                 .padding(.horizontal, 20)
 
             ScrollView {
                 gameDifficultyChooser
-                    .padding(.top, 10)
+                    .padding(.top, 20)
                     .padding(.horizontal, 20)
 
                 Spacer()
@@ -56,7 +57,7 @@ struct MenuView: View {
             .scrollIndicators(.hidden)
             .scrollDisabled(showCustomDifficultySettings ? false : true)
 
-            startGameAndSettingsButton
+            startGameAndGameHistoryButton
                 .padding(.horizontal, 20)
                 .padding(.bottom, 20)
         }
@@ -83,7 +84,9 @@ struct MenuView: View {
         })
         .sheet(isPresented: $presentSettingsView, content: {
             SettingsView()
-                .preferredColorScheme(appSettingsManager.theme.colorScheme)
+        })
+        .sheet(isPresented: $presentGameHistoryView, content: {
+            GameHistoryView()
         })
         .animation(.easeInOut(duration: 0.3), value: gameSettingsManager.difficulty)
         .onChange(of: gameSettingsManager.difficulty) { _, newValue in
@@ -141,12 +144,8 @@ extension MenuView {
         .padding()
         .background(
             Rectangle()
-                .fill(Color(uiColor: .systemGray6))
+                .fill(Color(uiColor: .systemGray5))
                 .cornerRadius(12)
-                .shadow(
-                    color: isDarkModeOn ? .gray : .black,
-                    radius: 3
-                )
         )
     }
 
@@ -180,12 +179,8 @@ extension MenuView {
         .padding()
         .background(
             Rectangle()
-                .fill(Color(uiColor: .systemGray6))
+                .fill(Color(uiColor: .systemGray5))
                 .cornerRadius(12)
-                .shadow(
-                    color: isDarkModeOn ? .gray : .black,
-                    radius: 3
-                )
         )
     }
 
@@ -223,12 +218,8 @@ extension MenuView {
         .padding()
         .background(
             Rectangle()
-                .fill(Color(uiColor: .systemGray6))
+                .fill(Color(uiColor: .systemGray5))
                 .cornerRadius(12)
-                .shadow(
-                    color: isDarkModeOn ? .gray : .black,
-                    radius: 3
-                )
         )
     }
 
@@ -277,7 +268,7 @@ extension MenuView {
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 12)
-        .background(Color(uiColor: .systemGray5))
+        .background(Color(uiColor: .systemGray4))
         .cornerRadius(8)
     }
 
@@ -323,10 +314,25 @@ extension MenuView {
         }
     }
 
-    private var startGameAndSettingsButton: some View {
+    private var gameHistoryButton: some View {
+        Button {
+            hapticFeedbackManager.selection()
+            presentGameHistoryView.toggle()
+        } label: {
+            Image(systemName: "clock.arrow.trianglehead.counterclockwise.rotate.90")
+                .frame(width: 30, height: 30)
+                .foregroundColor(.white)
+                .font(.title2)
+                .padding()
+                .background(Color(uiColor: .systemGray4))
+                .cornerRadius(15)
+        }
+    }
+
+    private var startGameAndGameHistoryButton: some View {
         HStack {
+            gameHistoryButton
             startGameButton
-            Spacer()
             settingsButton
         }
     }
