@@ -76,7 +76,6 @@ struct BoardView: View {
                 }
             }
         }
-        .preferredColorScheme(appSettingsManager.theme == .dark ? .dark : .light)
         .onDisappear {
             timer?.invalidate()
         }
@@ -197,13 +196,15 @@ extension BoardView {
 // MARK: - Preview
 
 #Preview {
-    BoardView(
-        gameEngineManager: DefaultGameEngineManager(
-            rows: 12,
-            columns: 12,
-            totalMines: 10
+    NavigationStack {
+        BoardView(
+            gameEngineManager: DefaultGameEngineManager(
+                rows: 12,
+                columns: 12,
+                totalMines: 10
+            )
         )
-    )
-    .environment(\.appSettingsManager, DefaultAppSettingsManager())
-    .environment(\.gameSettingsManager, DefaultGameSettingsManager())
+        .environment(\.appSettingsManager, DefaultAppSettingsManager())
+        .environment(\.gameSettingsManager, DefaultGameSettingsManager())
+    }
 }
