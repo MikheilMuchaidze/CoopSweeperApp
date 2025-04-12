@@ -23,6 +23,10 @@ struct BoardView: View {
     @State private var timer: Timer?
     @State private var showGameResults = false
     @State private var gameResults: GameResultsModel?
+    @State private var scale: CGFloat = 1.0
+    @State private var lastScale: CGFloat = 1.0
+    @State private var offset: CGSize = .zero
+    @State private var lastOffset: CGSize = .zero
 
     // MARK: - Environment Properties
 
@@ -37,79 +41,98 @@ struct BoardView: View {
     // MARK: - Body
 
     var body: some View {
-        VStack(spacing: 20) {
-            mineCountView
-                .padding(.horizontal)
+        VStack(spacing: 0) {
+            VStack(spacing: 8) {
+                playerNameSection
+                minesCountSection
+            }
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color(.systemGray6))
 
-            boardView
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(8)
-                .padding()
+            boardViewSection
 
-            Spacer()
-
-            timerView
-                .padding(.bottom, 20)
-
-            gameControlsView
-                .padding(.horizontal)
-                .padding(.bottom, 30)
-        }
-        .padding()
-        .navigationTitle(gameSettingsManager.playerName)
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    showGameResults = true
-                    gameResults = GameResultsModel(
-                        playerName: gameSettingsManager.playerName,
-                        time: elapsedTime,
-                        minesFound: gameEngineManager.totalMines - gameEngineManager.remainingMines,
-                        totalMines: gameEngineManager.totalMines,
-                        gameWon: gameEngineManager.gameWon
-                    )
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.red)
+            VStack(spacing: 12) {
+                timerView
+                HStack(spacing: 20) {
+                    reloadGameButtonView
+                    endGameButtonView
                 }
             }
+            .padding()
+            .background(Color(.systemGray6))
+        }
+        .onAppear {
+            startTimer()
         }
         .onDisappear {
-            timer?.invalidate()
+            stopTimer()
         }
-        .alert("Game Results", isPresented: $showGameResults) {
-            Button("End Game") {
+        .alert("Game Over", isPresented: $showGameResults) {
+            Button("OK") {
                 dismiss()
             }
         } message: {
             if let results = gameResults {
                 Text("""
                     Player: \(results.playerName)
-                    Time: \(formatTime(results.time))
+                    Time: \(String(format: "%.1f", results.time))s
                     Mines Found: \(results.minesFound)/\(results.totalMines)
-                    Status: \(results.gameWon ? "Won! 🎉" : "Lost 😔")
+                    Result: \(results.gameWon ? "Won" : "Lost")
                     """)
             }
         }
     }
-
+    
+    // MARK: - Private Methods
+    
     private func startTimer() {
-        guard startTime == nil else { return }
         startTime = Date()
         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
-            if let start = startTime {
-                elapsedTime = Date().timeIntervalSince(start)
+            if let startTime = startTime {
+                elapsedTime = Date().timeIntervalSince(startTime)
             }
         }
     }
-
-    private func resetTimer() {
+    
+    private func stopTimer() {
         timer?.invalidate()
         timer = nil
-        startTime = nil
+    }
+    
+    private func resetTimer() {
+        stopTimer()
+        startTime = Date()
         elapsedTime = 0
+        startTimer()
+    }
+    
+    private func checkGameState() {
+        if gameEngineManager.gameOver || gameEngineManager.gameWon {
+            stopTimer()
+            let results = GameResultsModel(
+                playerName: gameSettingsManager.playerName,
+                time: elapsedTime,
+                minesFound: gameEngineManager.totalMines - gameEngineManager.remainingMines,
+                totalMines: gameEngineManager.totalMines,
+                gameWon: gameEngineManager.gameWon
+            )
+            gameResults = results
+            showGameResults = true
+        }
+    }
+    
+    private func endGame() {
+        stopTimer()
+        let results = GameResultsModel(
+            playerName: gameSettingsManager.playerName,
+            time: elapsedTime,
+            minesFound: gameEngineManager.totalMines - gameEngineManager.remainingMines,
+            totalMines: gameEngineManager.totalMines,
+            gameWon: false
+        )
+        gameResults = results
+        showGameResults = true
     }
 
     private func formatTime(_ timeInterval: TimeInterval) -> String {
@@ -122,15 +145,73 @@ struct BoardView: View {
 // MARK: - Body Components
 
 extension BoardView {
-    private var mineCountView: some View {
-        HStack {
-            Text("Mines: \(gameEngineManager.remainingMines)")
-                .font(.headline)
-                .foregroundColor(.primary)
+    private var playerNameSection: some View {
+        Text(gameSettingsManager.playerName + "is playing")
+            .font(.title2)
+            .bold()
+    }
+
+    private var minesCountSection: some View {
+        Text("Mines: \(gameEngineManager.remainingMines)/\(gameEngineManager.totalMines)")
+            .font(.title3)
+    }
+
+    private var boardViewSection: some View {
+        GeometryReader { geometry in
+            ScrollView([.horizontal, .vertical], showsIndicators: false) {
+                boardContent
+                    .scaleEffect(scale)
+                    .gesture(magnificationGesture)
+                    .gesture(dragGesture)
+            }
         }
-        .padding()
-        .background(Color.gray.opacity(0.1))
-        .cornerRadius(10)
+    }
+
+    private var boardContent: some View {
+        VStack(spacing: 0) {
+            ForEach(0..<gameEngineManager.rows, id: \.self) { row in
+                HStack(spacing: 0) {
+                    ForEach(0..<gameEngineManager.columns, id: \.self) { column in
+                        CellView(
+                            cell: gameEngineManager.cells[row][column],
+                            size: cellSize
+                        )
+                        .onTapGesture {
+                            gameEngineManager.revealCell(row: row, column: column)
+                            checkGameState()
+                        }
+                        .onLongPressGesture {
+                            gameEngineManager.toggleFlag(row: row, column: column)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private var magnificationGesture: some Gesture {
+        MagnificationGesture()
+            .onChanged { value in
+                let delta = value / lastScale
+                lastScale = value
+                scale = min(max(0.5, scale * delta), 3.0)
+            }
+            .onEnded { _ in
+                lastScale = 1.0
+            }
+    }
+
+    private var dragGesture: some Gesture {
+        DragGesture()
+            .onChanged { value in
+                offset = CGSize(
+                    width: lastOffset.width + value.translation.width,
+                    height: lastOffset.height + value.translation.height
+                )
+            }
+            .onEnded { _ in
+                lastOffset = offset
+            }
     }
 
     private var timerView: some View {
@@ -138,9 +219,9 @@ extension BoardView {
             Text("Time")
                 .font(.headline)
                 .foregroundColor(.secondary)
-            
+
             Text(formatTime(elapsedTime))
-                .font(.system(size: 48, weight: .bold, design: .monospaced))
+                .font(.system(size: 30, weight: .bold, design: .monospaced))
                 .foregroundColor(.primary)
         }
         .padding()
@@ -148,47 +229,32 @@ extension BoardView {
         .cornerRadius(15)
     }
 
-    private var gameControlsView: some View {
-        HStack(spacing: 20) {
-            Button {
-                gameEngineManager.resetGame()
-                resetTimer()
-            } label: {
-                Label("New Game", systemImage: "arrow.clockwise")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .frame(height: 44)
-                    .frame(maxWidth: .infinity)
-                    .background(Color.blue)
-                    .cornerRadius(15)
-            }
+    private var reloadGameButtonView: some View {
+        Button {
+            gameEngineManager.resetGame()
+            resetTimer()
+        } label: {
+            Label("Reload", systemImage: "arrow.clockwise")
+                .font(.title3)
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.blue)
+                .cornerRadius(10)
         }
     }
 
-    private var boardView: some View {
-        VStack(spacing: 0) {
-            ForEach(0..<gameEngineManager.rows, id: \.self) { row in
-                HStack(spacing: 0) {
-                    ForEach(0..<gameEngineManager.columns, id: \.self) { column in
-                        CellView(cell: gameEngineManager.cells[row][column], size: cellSize)
-                            .onTapGesture {
-                                if gameEngineManager.cells[row][column].state == .hidden {
-                                    startTimer()
-                                }
-                                if appSettingsManager.vibrationEnabled {
-                                    // Add vibration feedback
-                                }
-                                gameEngineManager.revealCell(row: row, column: column)
-                            }
-                            .onLongPressGesture {
-                                if appSettingsManager.vibrationEnabled {
-                                    // Add vibration feedback
-                                }
-                                gameEngineManager.toggleFlag(row: row, column: column)
-                            }
-                    }
-                }
-            }
+    private var endGameButtonView: some View {
+        Button {
+            endGame()
+        } label: {
+            Label("End Game", systemImage: "xmark.circle.fill")
+                .font(.title3)
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.red)
+                .cornerRadius(10)
         }
     }
 }
@@ -197,14 +263,15 @@ extension BoardView {
 
 #Preview {
     NavigationStack {
-        BoardView(
-            gameEngineManager: DefaultGameEngineManager(
-                rows: 12,
-                columns: 12,
-                totalMines: 10
-            )
+        let defaultGameEngineManager = DefaultGameEngineManager(
+            rows: 12,
+            columns: 12,
+            totalMines: 10
         )
-        .environment(\.appSettingsManager, DefaultAppSettingsManager())
-        .environment(\.gameSettingsManager, DefaultGameSettingsManager())
+        let defaultGameSettingsManager = DefaultGameSettingsManager()
+        defaultGameSettingsManager.updateGameSettings(with: .playerName("123ijij"))
+        return BoardView(gameEngineManager: defaultGameEngineManager)
+            .environment(\.appSettingsManager, DefaultAppSettingsManager())
+            .environment(\.gameSettingsManager, defaultGameSettingsManager)
     }
 }

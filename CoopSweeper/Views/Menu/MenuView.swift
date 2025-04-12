@@ -46,16 +46,11 @@ struct MenuView: View {
                 .padding(.top, 20)
                 .padding(.horizontal, 20)
 
-            ScrollView {
-                gameDifficultyChooser
-                    .padding(.top, 20)
-                    .padding(.horizontal, 20)
+            gameDifficultyChooser
+                .padding(.top, 20)
+                .padding(.horizontal, 20)
 
-                Spacer()
-            }
-            .scrollDismissesKeyboard(.immediately)
-            .scrollIndicators(.hidden)
-            .scrollDisabled(showCustomDifficultySettings ? false : true)
+            Spacer()
 
             startGameAndGameHistoryButton
                 .padding(.horizontal, 20)
@@ -63,6 +58,7 @@ struct MenuView: View {
         }
         .onAppear {
             userNameText = ""
+            gameSettingsManager.updateGameSettings(with: .playerName(""))
         }
         .onTapGesture {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
@@ -136,7 +132,11 @@ extension MenuView {
                 .foregroundStyle(.primary)
 
             CustomTextFieldWithErrorState(
-                text: $userNameText,
+                text: .init(get: {
+                    gameSettingsManager.playerName
+                }, set: { newName in
+                    gameSettingsManager.updateGameSettings(with: .playerName(newName))
+                }),
                 hasError: $userNameHasError,
                 placeholder: "Enter your name"
             )
@@ -212,7 +212,11 @@ extension MenuView {
             .pickerStyle(SegmentedPickerStyle())
 
             if gameSettingsManager.difficulty == .custom {
-                customDifficultySettings
+                ScrollView {
+                    customDifficultySettings
+                }
+                .scrollDismissesKeyboard(.immediately)
+                .scrollIndicators(.hidden)
             }
         }
         .padding()
@@ -274,7 +278,7 @@ extension MenuView {
 
     private var startGameButton: some View {
         Button {
-            if userNameText.isEmpty {
+            if gameSettingsManager.playerName.isEmpty {
                 userNameHasError = true
                 hapticFeedbackManager.notification(type: .error)
                 return

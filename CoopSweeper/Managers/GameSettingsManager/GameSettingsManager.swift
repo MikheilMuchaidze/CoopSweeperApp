@@ -70,6 +70,8 @@ final class DefaultGameSettingsManager: GameSettingsManager {
 
     func updateGameSettings(with update: GameSettingsUpdate) {
         switch update {
+        case let .playerName(newPlayerName):
+            playerName = newPlayerName
         case let .difficulty(gameDifficulty):
             difficulty = gameDifficulty
         case let .mode(gameMode):
@@ -85,6 +87,7 @@ final class DefaultGameSettingsManager: GameSettingsManager {
 }
 
 enum GameSettingsUpdate {
+    case playerName(String)
     case difficulty(GameDifficulty)
     case mode(GameMode)
     case customWidth(Int)
