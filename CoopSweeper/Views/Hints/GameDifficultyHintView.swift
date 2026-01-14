@@ -9,50 +9,17 @@ struct GameDifficultyHintView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    difficultySection(
-                        title: "Easy",
-                        description: "Perfect for beginners! A small board with few mines to help you learn the basics of the game.",
-                        icon: "1.circle.fill",
-                        color: .green
-                    )
-                    
-                    difficultySection(
-                        title: "Medium",
-                        description: "A balanced challenge with a medium-sized board and a moderate number of mines.",
-                        icon: "2.circle.fill",
-                        color: .orange
-                    )
-                    
-                    difficultySection(
-                        title: "Hard",
-                        description: "For experienced players! A large board with many mines that will test your skills.",
-                        icon: "3.circle.fill",
-                        color: .red
-                    )
-                    
-                    difficultySection(
-                        title: "Custom",
-                        description: "Create your own challenge by setting the board size and number of mines. Perfect for tailoring the game to your skill level.",
-                        icon: "slider.horizontal.3",
-                        color: .blue
-                    )
-
-                    Spacer()
-                }
-                .padding()
-            }
-            .navigationTitle("Game Difficulty Guide")
-            .navigationBarTitleDisplayMode(.large)
-            .presentationDragIndicator(.visible)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        dismiss()
+            content()
+                .navigationTitle("Game Difficulty Guide")
+                .navigationBarTitleDisplayMode(.large)
+                .presentationDragIndicator(.visible)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Done") {
+                            dismiss()
+                        }
                     }
                 }
-            }
         }
     }
 }
@@ -60,6 +27,49 @@ struct GameDifficultyHintView: View {
 // MARK: - Body Components
 
 extension GameDifficultyHintView {
+    private func content() -> some View {
+        AppConstants.mainBackgroundColor
+            .ignoresSafeArea()
+            .overlay(content: scrollableContent)
+    }
+    
+    private func scrollableContent() -> some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                difficultySection(
+                    title: "Easy",
+                    description: "Perfect for beginners! A small board with few mines to help you learn the basics of the game.",
+                    icon: "1.circle.fill",
+                    color: .green
+                )
+                
+                difficultySection(
+                    title: "Medium",
+                    description: "A balanced challenge with a medium-sized board and a moderate number of mines.",
+                    icon: "2.circle.fill",
+                    color: .orange
+                )
+                
+                difficultySection(
+                    title: "Hard",
+                    description: "For experienced players! A large board with many mines that will test your skills.",
+                    icon: "3.circle.fill",
+                    color: .red
+                )
+                
+                difficultySection(
+                    title: "Custom",
+                    description: "Create your own challenge by setting the board size and number of mines. Perfect for tailoring the game to your skill level.",
+                    icon: "slider.horizontal.3",
+                    color: .blue
+                )
+
+                Spacer()
+            }
+            .padding()
+        }
+    }
+    
     private func difficultySection(
         title: String,
         description: String,
@@ -85,7 +95,7 @@ extension GameDifficultyHintView {
             Spacer()
         }
         .padding()
-        .background(Color(uiColor: .systemGray5))
+        .background(Color(uiColor: .systemGray4))
         .cornerRadius(12)
     }
 }

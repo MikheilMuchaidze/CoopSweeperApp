@@ -34,27 +34,21 @@ struct MenuView: View {
     // MARK: - Body
 
     var body: some View {
-        VStack(spacing: 0) {
-            titleAndSubtitleView
-                .padding(.top, 0)
-                .padding(.bottom, 20)
-
-            playerNameChooser
-                .padding(.horizontal, 20)
-
-            gameModeChooser
-                .padding(.top, 20)
-                .padding(.horizontal, 20)
-
-            gameDifficultyChooser
-                .padding(.top, 20)
-                .padding(.horizontal, 20)
-
-            Spacer()
-
-            startGameAndGameHistoryButton
-                .padding(.horizontal, 20)
-                .padding(.bottom, 20)
+        AppConstants.mainBackgroundColor
+            .ignoresSafeArea()
+            .overlay(content: content)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                gameHistoryButton
+            }
+            ToolbarItem(placement: .principal) {
+                Text("CoopSweeper")
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(.white)
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                settingsButton
+            }
         }
         .onAppear {
             userNameText = ""
@@ -84,7 +78,10 @@ struct MenuView: View {
         .sheet(isPresented: $presentGameHistoryView, content: {
             GameHistoryView()
         })
-        .animation(.easeInOut(duration: 0.3), value: gameSettingsManager.difficulty)
+        .animation(
+            .easeInOut(duration: 0.3),
+            value: gameSettingsManager.difficulty
+        )
         .onChange(of: gameSettingsManager.difficulty) { _, newValue in
             if newValue == .custom {
                 showCustomDifficultySettings = true
@@ -113,15 +110,23 @@ struct MenuView: View {
 // MARK: - Body Components
 
 extension MenuView {
-    private var titleAndSubtitleView: some View {
-        VStack(spacing: 8) {
-            Text("CoopSweeper")
-                .font(.system(size: 40, weight: .bold))
-                .foregroundColor(.blue)
-
-            Text("Challenge Your Mind 🚀")
-                .font(.title3)
-                .foregroundColor(.gray)
+    private func content() -> some View {
+        VStack(spacing: 0) {
+            playerNameChooser
+                .padding(.horizontal, 20)
+            
+            gameModeChooser
+                .padding(.top, 20)
+                .padding(.horizontal, 20)
+            
+            gameDifficultyChooser
+                .padding(.top, 20)
+                .padding(.horizontal, 20)
+            
+            Spacer()
+            
+            startGameButton
+                .padding(.horizontal, 20)
         }
     }
 
@@ -129,7 +134,7 @@ extension MenuView {
         VStack(alignment: .leading, spacing: 15) {
             Label("Player Name", systemImage: "person.fill")
                 .font(.title2.weight(.bold))
-                .foregroundStyle(.primary)
+                .foregroundStyle(.black)
 
             CustomTextFieldWithErrorState(
                 text: .init(get: {
@@ -144,7 +149,8 @@ extension MenuView {
         .padding()
         .background(
             Rectangle()
-                .fill(Color(uiColor: .systemGray5))
+                .fill(Color(uiColor: .systemGray4))
+//                .fill(.ultraThinMaterial)
                 .cornerRadius(12)
         )
     }
@@ -179,7 +185,7 @@ extension MenuView {
         .padding()
         .background(
             Rectangle()
-                .fill(Color(uiColor: .systemGray5))
+                .fill(Color(uiColor: .systemGray4))
                 .cornerRadius(12)
         )
     }
@@ -222,7 +228,7 @@ extension MenuView {
         .padding()
         .background(
             Rectangle()
-                .fill(Color(uiColor: .systemGray5))
+                .fill(Color(uiColor: .systemGray4))
                 .cornerRadius(12)
         )
     }
@@ -275,7 +281,7 @@ extension MenuView {
         .background(Color(uiColor: .systemGray4))
         .cornerRadius(8)
     }
-
+    
     private var startGameButton: some View {
         Button {
             if gameSettingsManager.playerName.isEmpty {
@@ -292,15 +298,35 @@ extension MenuView {
                     .font(.title3.weight(.semibold))
                 Image(systemName: "play.fill")
             }
-            .font(.title3)
-            .foregroundColor(.white)
-            .frame(height: 30)
+            .frame(height: 36)
             .frame(maxWidth: .infinity)
-            .padding()
-            .background(Color.green)
-            .cornerRadius(15)
-            .shadow(color: isDarkModeOn ? .white : .black, radius: 3)
         }
+        .buttonStyle(.glassProminent)
+        .tint(.blue)
+        .shadow(
+            color: Color(
+                red: 0.3,
+                green: 0.7,
+                blue: 0.9
+            ).opacity(0.5),
+            radius: 20,
+            x: 0,
+            y: 8
+        )
+    }
+    
+    private var gameHistoryButton: some View {
+        Button {
+            hapticFeedbackManager.selection()
+            presentGameHistoryView.toggle()
+        } label: {
+            Image(systemName: "clock.arrow.trianglehead.counterclockwise.rotate.90")
+                .frame(width: 44, height: 44)
+                .foregroundColor(.white)
+                .font(.title2)
+        }
+        .buttonStyle(.glassProminent)
+        .tint(Color(uiColor: .systemGray4))
     }
 
     private var settingsButton: some View {
@@ -309,36 +335,12 @@ extension MenuView {
             presentSettingsView.toggle()
         } label: {
             Image(systemName: "gear")
-                .frame(width: 30, height: 30)
+                .frame(width: 44, height: 44)
                 .foregroundColor(.white)
                 .font(.title2)
-                .padding()
-                .background(Color.blue)
-                .cornerRadius(15)
         }
-    }
-
-    private var gameHistoryButton: some View {
-        Button {
-            hapticFeedbackManager.selection()
-            presentGameHistoryView.toggle()
-        } label: {
-            Image(systemName: "clock.arrow.trianglehead.counterclockwise.rotate.90")
-                .frame(width: 30, height: 30)
-                .foregroundColor(.white)
-                .font(.title2)
-                .padding()
-                .background(Color(uiColor: .systemGray4))
-                .cornerRadius(15)
-        }
-    }
-
-    private var startGameAndGameHistoryButton: some View {
-        HStack {
-            gameHistoryButton
-            startGameButton
-            settingsButton
-        }
+        .buttonStyle(.glassProminent)
+        .tint(Color.blue)
     }
 }
 
