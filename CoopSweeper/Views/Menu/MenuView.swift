@@ -159,14 +159,6 @@ extension MenuView {
                     .scrollIndicators(.hidden)
                     .padding(.top, 2)
             }
-            customDifficultySettings
-                .scrollDismissesKeyboard(.immediately)
-                .scrollIndicators(.hidden)
-                .padding(.top, 2)
-            customDifficultySettings
-                .scrollDismissesKeyboard(.immediately)
-                .scrollIndicators(.hidden)
-                .padding(.top, 2)
         }
         .animation(
             .easeInOut(duration: 0.3),
