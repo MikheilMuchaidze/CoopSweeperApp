@@ -19,9 +19,7 @@ struct GameModeHintView: View {
                             .bold()
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("Done") {
-                            dismiss()
-                        }
+                        Button("Done", action: { dismiss() })
                     }
                 }
         }

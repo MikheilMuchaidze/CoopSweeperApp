@@ -25,19 +25,5 @@ struct CoopSweeperApp: App {
                     .registerSheetViewsFor(sheetDestinations: $coordinator.presentedSheet)
             }
         }
-//        WindowGroup {
-//            NavigationStack(path: $coordinator.navigationPath) {
-//                MenuView()
-//                    .preferredColorScheme(appSettingsManager.theme.colorScheme)
-////                    .navigationDestination(for: NavigationDestination.self) { destination in
-////                        coordinator.destinationView(for: destination)
-////                    }
-//            }
-////            .sheet(item: $coordinator.presentedSheet) { destination in
-////                coordinator.sheetView(for: destination)
-////            }
-////            .fullScreenCover(item: $coordinator.presentedFullScreenCover) { destination in
-////                coordinator.fullScreenCoverView(for: destination)
-////            }
     }
 }

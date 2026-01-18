@@ -15,9 +15,7 @@ struct GameDifficultyHintView: View {
                 .presentationDragIndicator(.visible)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("Done") {
-                            dismiss()
-                        }
+                        Button("Done", action: { dismiss() })
                     }
                 }
         }

@@ -15,6 +15,8 @@ protocol MenuViewModelProtocol {
     var selectedCustomWidthForBoard: Int { get set }
     var selectedCustomHeightForBoard: Int { get set }
     var selectedCustomMinesForBoard : Int { get set }
+    var presentPlayerNameChooser: Bool { get set }
+    var playerName: String { get set }
     
     func presentGameModeHintView()
     func presentGameDifficultyHintView()
@@ -25,6 +27,11 @@ protocol MenuViewModelProtocol {
     func updateCustomGameWidth(with newValue: Int)
     func updateCustomGameHeight(with newValue: Int)
     func updateCustomGameMines(with newValue: Int)
+    func showPlayerChooserAlert()
+    func dismissPLayerChooserAlert()
+    func onAppear()
+    func isUserNameValid() -> Bool
+    func startGame()
 }
 
 @Observable
@@ -44,11 +51,18 @@ final class MenuViewModel: MenuViewModelProtocol {
     var gameModes: [GameMode] = GameMode.allCases
     var selectedGameMode: GameMode = .local
     var gameDifficulties: [GameDifficulty] = GameDifficulty.allCases
-//    var selectedGameDifficulty: GameDifficulty = .easy
-    var selectedGameDifficulty: GameDifficulty = .custom
+    var selectedGameDifficulty: GameDifficulty = .easy
     var selectedCustomWidthForBoard = 9
     var selectedCustomHeightForBoard = 9
     var selectedCustomMinesForBoard = 10
+    var presentPlayerNameChooser = false {
+        didSet {
+            if presentPlayerNameChooser == false {
+                onAppear()
+            }
+        }
+    }
+    var playerName = ""
     
     // MARK: - Init
     
@@ -138,5 +152,28 @@ final class MenuViewModel: MenuViewModelProtocol {
                 newValue
             )
         )
+    }
+    
+    func showPlayerChooserAlert() {
+        hapticFeedbackManager.notification(type: .warning)
+        presentPlayerNameChooser = true
+    }
+    
+    func dismissPLayerChooserAlert() {
+        presentPlayerNameChooser = false
+    }
+    
+    func onAppear() {
+        playerName = ""
+        gameSettingsManager.updateGameSettings(with: .playerName(""))
+    }
+    
+    func isUserNameValid() -> Bool {
+        playerName.isEmpty == false
+    }
+    
+    func startGame() {
+        hapticFeedbackManager.notification(type: .success)
+        coordinator.navigate(to: .gameView)
     }
 }

@@ -12,6 +12,10 @@ struct MenuView: View {
     
     @State private var viewModel: MenuViewModelProtocol
     
+    // MARK: - Private Properties
+    
+    @State private var startGameButtonHeight: CGFloat = .zero
+    
     // MARK: - Init
     
     init(
@@ -22,8 +26,6 @@ struct MenuView: View {
     
     // MARK: - Private Properties
     
-    @State private var userNameText: String = ""
-    @State private var userNameHasError: Bool? = false
     // Theme
     @Environment(\.colorScheme) var colorScheme
     private var isDarkModeOn: Bool {
@@ -50,10 +52,13 @@ struct MenuView: View {
                     settingsButton
                 }
             }
-//            .onAppear {
-//                userNameText = ""
-//                gameSettingsManager.updateGameSettings(with: .playerName(""))
-//            }
+            .alert(
+                "Enter player name",
+                isPresented: $viewModel.presentPlayerNameChooser,
+                actions: selectePLayerNameAndStartGame,
+                message: selectPlayerMessage
+            )
+            .onAppear(perform: viewModel.onAppear)
     }
 }
 
@@ -66,7 +71,7 @@ extension MenuView {
                 gameModeChooser
                     .padding(.top, 20)
                     .padding(.horizontal, 20)
-                                
+                
                 gameDifficultyChooser
                     .padding(.top, 40)
                     .padding(.horizontal, 20)
@@ -75,6 +80,8 @@ extension MenuView {
             }
             .padding(.top, 12)
         }
+        .bottomFadeMask(height: 4)
+        .padding(.bottom, startGameButtonHeight)
     }
     
     private var playerNameChooser: some View {
@@ -82,16 +89,6 @@ extension MenuView {
             Label("Player Name", systemImage: "person.fill")
                 .font(.title2.weight(.bold))
                 .foregroundStyle(.black)
-            
-//            CustomTextFieldWithErrorState(
-//                text: .init(get: {
-//                    gameSettingsManager.playerName
-//                }, set: { newName in
-//                    gameSettingsManager.updateGameSettings(with: .playerName(newName))
-//                }),
-//                hasError: $userNameHasError,
-//                placeholder: "Enter your name"
-//            )
         }
         .padding()
         .background(
@@ -155,17 +152,25 @@ extension MenuView {
                 }
             }
             .padding(.top, 12)
-                        
+            
             if viewModel.selectedGameDifficulty == .custom {
                 customDifficultySettings
                     .scrollDismissesKeyboard(.immediately)
                     .scrollIndicators(.hidden)
                     .padding(.top, 2)
             }
+            customDifficultySettings
+                .scrollDismissesKeyboard(.immediately)
+                .scrollIndicators(.hidden)
+                .padding(.top, 2)
+            customDifficultySettings
+                .scrollDismissesKeyboard(.immediately)
+                .scrollIndicators(.hidden)
+                .padding(.top, 2)
         }
         .animation(
             .easeInOut(duration: 0.3),
-            value: viewModel.selectedGameMode
+            value: viewModel.selectedGameDifficulty
         )
     }
     
@@ -236,27 +241,8 @@ extension MenuView {
         )
     }
     
-    private var asd: some View {
-        Label("asdasd", image: "a")
-    }
-    
     private func startGameButton() -> some View {
-        Button {
-            if false {
-//            if gameSettingsManager.playerName.isEmpty {
-                userNameHasError = true
-//                hapticFeedbackManager.notification(type: .error)
-                return
-            }
-            
-//            hapticFeedbackManager.notification(type: .success)
-//            let gameEngine = DefaultGameEngineManager(
-//                rows: gameSettingsManager.boardHeight,
-//                columns: gameSettingsManager.boardWidth,
-//                totalMines: gameSettingsManager.mineCount
-//            )
-//            coordinator.push(.board(gameEngineManager: gameEngine))
-        } label: {
+        Button(action: viewModel.showPlayerChooserAlert) {
             HStack {
                 Text("Start Game")
                     .font(.title3.weight(.semibold))
@@ -278,6 +264,9 @@ extension MenuView {
             x: 0,
             y: 8
         )
+        .readSize { size in
+            startGameButtonHeight = size.height
+        }
     }
     
     private var gameHistoryButton: some View {
@@ -301,6 +290,29 @@ extension MenuView {
         .buttonStyle(.glassProminent)
         .tint(Color.brown)
     }
+    
+    private func selectePLayerNameAndStartGame() -> some View {
+        VStack(spacing: .zero) {
+            TextField(
+                "Username",
+                text: $viewModel.playerName
+            )
+                .textInputAutocapitalization(.never)
+            
+            Button("Play", action: viewModel.startGame)
+                .disabled(!viewModel.isUserNameValid())
+            
+            Button(
+                "Cancel",
+                role: .cancel,
+                action: viewModel.dismissPLayerChooserAlert
+            )
+        }
+    }
+    
+    private func selectPlayerMessage() -> some View {
+        Text("Please enter a valid username to start game.")
+    }
 }
 
 // MARK: - Preview
@@ -314,5 +326,48 @@ extension MenuView {
             gameSettingsManager: GameSettingsManager()
         )
         MenuView(viewModel: viewModel)
+    }
+}
+
+// TODO: - Better solution
+
+extension View {
+    func readSize(onChange: @escaping (CGSize) -> Void) -> some View {
+        background(
+            GeometryReader { proxy in
+                Color.clear
+                    .preference(key: SizePreferenceKey.self, value: proxy.size)
+            }
+        )
+        .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
+    }
+}
+
+struct SizePreferenceKey: PreferenceKey {
+    static var defaultValue: CGSize = .zero
+
+    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
+        value = nextValue()
+    }
+}
+
+extension View {
+    func bottomFadeMask(height: CGFloat = 40) -> some View {
+        self.mask(
+            VStack(spacing: 0) {
+                Rectangle()
+                    .fill(Color.white)
+
+                LinearGradient(
+                    colors: [
+                        .white,
+                        .white.opacity(0)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: height)
+            }
+        )
     }
 }
