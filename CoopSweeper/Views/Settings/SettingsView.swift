@@ -43,24 +43,21 @@ extension SettingsView {
     private var gameSettingsSection: some View {
         Section(header: Text("Game Settings")) {
             Toggle("Sound Effects", isOn: .init(get: {
-                true
-//                appSettingsManager.soundEnabled
+                viewModel.getSoundEffectsSetting()
             }, set: { newValueForSoundSetting in
-////                appSettingsManager.updateSettings(with: .sound(isOn: newValueForSoundSetting))
+                viewModel.updateSoundEffectSetting(with: newValueForSoundSetting)
             }))
 
             Toggle("Haptic Feedback", isOn: .init(get: {
-                true
-//                appSettingsManager.vibrationEnabled
+                viewModel.getVibrationSetting()
             }, set: { newValueForVibrationSetting in
-////                appSettingsManager.updateSettings(with: .vibrationEnabled(isOn: newValueForVibrationSetting))
+                viewModel.updateVibrationSetting(with: newValueForVibrationSetting)
             }))
 
             Picker("Dark Mode", selection: .init(get: {
-                true
-//                appSettingsManager.theme
+                viewModel.getCurrentThemeSetting()
             }, set: { newValueForDarkModeSetting in
-//                appSettingsManager.updateSettings(with: .theme(type: newValueForDarkModeSetting))
+                viewModel.updateCurrentThemeSetting(with: newValueForDarkModeSetting)
             })) {
                 ForEach(AppTheme.allCases, id: \.self) { appTheme in
                     Text(appTheme.rawValue)
@@ -98,31 +95,31 @@ extension SettingsView {
 
     private var linksSection: some View {
         Section(header: Text("Links")) {
-            Link(destination: URL(string: "https://www.example.com/privacy")!) {
+            Button(action: viewModel.navigateToPrivacyPolices) {
                 HStack {
                     Text("Privacy Policy")
                     Spacer()
                     Image(systemName: "arrow.up.right.square")
-                        .foregroundColor(.blue)
                 }
+                .foregroundColor(.blue)
             }
-
-            Link(destination: URL(string: "https://www.example.com/terms")!) {
+            
+            Button(action: viewModel.navigateToTermsAndConditions) {
                 HStack {
                     Text("Terms of Service")
                     Spacer()
                     Image(systemName: "arrow.up.right.square")
-                        .foregroundColor(.blue)
                 }
+                .foregroundColor(.blue)
             }
-
-            Link(destination: URL(string: "https://www.example.com/support")!) {
+            
+            Button(action: viewModel.navigateToSupport) {
                 HStack {
                     Text("Support")
                     Spacer()
                     Image(systemName: "arrow.up.right.square")
-                        .foregroundColor(.blue)
                 }
+                .foregroundColor(.blue)
             }
         }
     }
