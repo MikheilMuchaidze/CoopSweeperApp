@@ -8,10 +8,14 @@
 import Foundation
 
 protocol MenuViewModelProtocol {
+    var gameModes: [GameMode] { get }
+    var selectedGameMode: GameMode { get set }
+    
     func presentGameModeHintView()
     func presentGameDifficultyHintView()
     func presentGameHistoryView()
     func presentSettingsView()
+    func updateGameMode(with newValue: GameMode)
 }
 
 @Observable
@@ -25,6 +29,11 @@ final class MenuViewModel: MenuViewModelProtocol {
     private let hapticFeedbackManager: HapticFeedbackManagerProtocol
     private let appSettingsManager: AppSettingsManagerProtocol
     private let gameSettingsManager: GameSettingsManagerProtocol
+    
+    // MARK: - Shared Properties
+    
+    var gameModes: [GameMode] = GameMode.allCases
+    var selectedGameMode: GameMode = .local
     
     // MARK: - Init
     
@@ -64,5 +73,14 @@ final class MenuViewModel: MenuViewModelProtocol {
             appSettingsManager: appSettingsManager
         )
         coordinator.present(sheet: .settingsView(input: settingsViewInputs))
+    }
+    
+    func updateGameMode(with newValue: GameMode) {
+        selectedGameMode = newValue
+        gameSettingsManager.updateGameSettings(
+            with: .mode(
+                newValue
+            )
+        )
     }
 }

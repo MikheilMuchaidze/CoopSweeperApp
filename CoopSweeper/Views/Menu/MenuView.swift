@@ -94,9 +94,9 @@ extension MenuView {
                 gameModeChooser
                     .padding(.top, 20)
                     .padding(.horizontal, 20)
-                
+                                
                 gameDifficultyChooser
-                    .padding(.top, 20)
+                    .padding(.top, 40)
                     .padding(.horizontal, 20)
                 
                 Spacer()
@@ -130,47 +130,44 @@ extension MenuView {
     }
     
     private var gameModeChooser: some View {
-        VStack(alignment: .leading, spacing: 15) {
+        VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Label("Game Mode", systemImage: "person.2.fill")
                     .font(.title3.weight(.bold))
-                    .foregroundStyle(.primary)
-                Spacer()
+                    .foregroundStyle(.white)
                 Image(systemName: "questionmark.circle.fill")
                     .foregroundColor(.blue)
                     .onTapGesture(perform: viewModel.presentGameModeHintView)
+                Spacer()
             }
             
-            //            Picker("Select Game Mode", selection: .init(get: {
-            //                gameSettingsManager.gameMode
-            //            }, set: { newGameModeValue in
-            //                gameSettingsManager.updateGameSettings(with: .mode(newGameModeValue))
-            //            })) {
-            //                ForEach(GameMode.allCases, id: \.self) { gameMode in
-            //                    Text(gameMode.rawValue.capitalized)
-            //                        .tag(gameMode)
-            //                }
-            //            }
-            //            .pickerStyle(SegmentedPickerStyle())
+            HStack(alignment: .center, spacing: 30) {
+                ForEach(viewModel.gameModes, id: \.id) { gameMode in
+                    GameModeButton(
+                        mode: gameMode,
+                        isSelected: viewModel.selectedGameMode == gameMode,
+                        action: { viewModel.updateGameMode(with: gameMode) }
+                    )
+                }
+            }
+            .padding(.top, 10)
         }
-        .padding()
-        .background(
-            Rectangle()
-                .fill(Color(uiColor: .systemGray4))
-                .cornerRadius(12)
+        .animation(
+            .easeInOut(duration: 0.3),
+            value: viewModel.selectedGameMode
         )
     }
     
     private var gameDifficultyChooser: some View {
-        VStack(alignment: .leading, spacing: 15) {
+        VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Label("Difficulty", systemImage: "chart.bar.fill")
                     .font(.title2.weight(.bold))
-                    .foregroundStyle(.primary)
-                Spacer()
+                    .foregroundStyle(.white)
                 Image(systemName: "questionmark.circle.fill")
                     .foregroundColor(.blue)
                     .onTapGesture(perform: viewModel.presentGameDifficultyHintView)
+                Spacer()
             }
             
 //            Picker("Select Difficulty", selection: .init(get: {
@@ -193,11 +190,9 @@ extension MenuView {
 //                .scrollIndicators(.hidden)
 //            }
         }
-        .padding()
-        .background(
-            Rectangle()
-                .fill(Color(uiColor: .systemGray4))
-                .cornerRadius(12)
+        .animation(
+            .easeInOut(duration: 0.3),
+            value: viewModel.selectedGameMode
         )
     }
     
@@ -315,22 +310,14 @@ extension MenuView {
 
 // MARK: - Preview
 
-//#Preview {
-//    @Previewable @State var coordinator = Coordinator()
-//    NavigationStack(path: $coordinator.navigationPath) {
-//        MenuView()
-//            .navigationDestination(for: NavigationDestination.self) { destination in
-//                coordinator.destinationView(for: destination)
-//            }
-//    }
-//    .sheet(item: $coordinator.presentedSheet) { destination in
-//        coordinator.sheetView(for: destination)
-//    }
-//    .fullScreenCover(item: $coordinator.presentedFullScreenCover) { destination in
-//        coordinator.fullScreenCoverView(for: destination)
-//    }
-//    .environment(\.coordinator, coordinator)
-//    .environment(\.appSettingsManager, DefaultAppSettingsManager())
-//    .environment(\.gameSettingsManager, DefaultGameSettingsManager())
-//    .environment(\.hapticFeedbackManager, DefaultHapticFeedbackManager())
-//}
+#Preview {
+    NavigationStack {
+        let viewModel = MenuViewModel(
+            coordinator: Coordinator(),
+            hapticFeedbackManager: HapticFeedbackManager(),
+            appSettingsManager: AppSettingsManager(),
+            gameSettingsManager: GameSettingsManager()
+        )
+        MenuView(viewModel: viewModel)
+    }
+}
