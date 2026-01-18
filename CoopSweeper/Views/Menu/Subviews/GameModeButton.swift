@@ -44,14 +44,14 @@ struct GameModeButton: View {
                     : .white.opacity(0.8)
                 )
                 .frame(maxWidth: .infinity)
-                .frame(height: 48)
+                .frame(height: 60)
                 .background(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
                         .fill(.ultraThinMaterial)
                         .opacity(isSelected ? 0.8 : 0.5)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
                         .stroke(
                             isSelected ? Color(red: 0.3, green: 0.7, blue: 0.9) : Color.clear,
                             lineWidth: 2

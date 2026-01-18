@@ -24,8 +24,6 @@ struct MenuView: View {
     
     @State private var userNameText: String = ""
     @State private var userNameHasError: Bool? = false
-    // Other UI Validation
-    @State private var showCustomDifficultySettings = false
     // Theme
     @Environment(\.colorScheme) var colorScheme
     private var isDarkModeOn: Bool {
@@ -56,32 +54,6 @@ struct MenuView: View {
 //                userNameText = ""
 //                gameSettingsManager.updateGameSettings(with: .playerName(""))
 //            }
-//            .animation(
-//                .easeInOut(duration: 0.3),
-//                value: gameSettingsManager.difficulty
-//            )
-//            .onChange(of: gameSettingsManager.difficulty) { _, newValue in
-//                if newValue == .custom {
-//                    showCustomDifficultySettings = true
-//                } else {
-//                    showCustomDifficultySettings = false
-//                }
-//            }
-//            .onChange(of: gameSettingsManager.gameMode) { _, _ in
-//                hapticFeedbackManager.impact(style: .soft)
-//            }
-//            .onChange(of: gameSettingsManager.difficulty) { _, _ in
-//                hapticFeedbackManager.impact(style: .soft)
-//            }
-//            .onChange(of: gameSettingsManager.customWidth) { _, _ in
-//                hapticFeedbackManager.impact(style: .soft)
-//            }
-//            .onChange(of: gameSettingsManager.customHeight) { _, _ in
-//                hapticFeedbackManager.impact(style: .soft)
-//            }
-//            .onChange(of: gameSettingsManager.customMines) { _, _ in
-//                hapticFeedbackManager.impact(style: .soft)
-//            }
     }
 }
 
@@ -106,7 +78,7 @@ extension MenuView {
     }
     
     private var playerNameChooser: some View {
-        VStack(alignment: .leading, spacing: 15) {
+        VStack(alignment: .leading, spacing: 16) {
             Label("Player Name", systemImage: "person.fill")
                 .font(.title2.weight(.bold))
                 .foregroundStyle(.black)
@@ -130,7 +102,7 @@ extension MenuView {
     }
     
     private var gameModeChooser: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Label("Game Mode", systemImage: "person.2.fill")
                     .font(.title3.weight(.bold))
@@ -141,7 +113,7 @@ extension MenuView {
                 Spacer()
             }
             
-            HStack(alignment: .center, spacing: 30) {
+            HStack(alignment: .center, spacing: 12) {
                 ForEach(viewModel.gameModes, id: \.id) { gameMode in
                     GameModeButton(
                         mode: gameMode,
@@ -150,7 +122,7 @@ extension MenuView {
                     )
                 }
             }
-            .padding(.top, 10)
+            .padding(.top, 12)
         }
         .animation(
             .easeInOut(duration: 0.3),
@@ -170,25 +142,26 @@ extension MenuView {
                 Spacer()
             }
             
-//            Picker("Select Difficulty", selection: .init(get: {
-//                gameSettingsManager.difficulty
-//            }, set: { newDifficultyValue in
-//                gameSettingsManager.updateGameSettings(with: .difficulty(newDifficultyValue))
-//            })) {
-//                ForEach(GameDifficulty.allCases, id: \.self) { difficulty in
-//                    Text(difficulty.rawValue.capitalized)
-//                        .tag(difficulty)
-//                }
-//            }
-//            .pickerStyle(SegmentedPickerStyle())
-            
-//            if gameSettingsManager.difficulty == .custom {
-//                ScrollView {
-//                    customDifficultySettings
-//                }
-//                .scrollDismissesKeyboard(.immediately)
-//                .scrollIndicators(.hidden)
-//            }
+            LazyVGrid(columns: [
+                GridItem(.flexible(), spacing: 12),
+                GridItem(.flexible(), spacing: 12)
+            ], spacing: 12) {
+                ForEach(viewModel.gameDifficulties, id: \.id) { difficulty in
+                    DifficultyButton(
+                        difficulty: difficulty,
+                        isSelected: viewModel.selectedGameDifficulty == difficulty,
+                        action: { viewModel.updateGameDifficulty(with: difficulty) }
+                    )
+                }
+            }
+            .padding(.top, 12)
+                        
+            if viewModel.selectedGameDifficulty == .custom {
+                customDifficultySettings
+                    .scrollDismissesKeyboard(.immediately)
+                    .scrollIndicators(.hidden)
+                    .padding(.top, 2)
+            }
         }
         .animation(
             .easeInOut(duration: 0.3),
@@ -200,49 +173,71 @@ extension MenuView {
         VStack(alignment: .leading, spacing: 12) {
             Text("Custom Settings")
                 .font(.headline)
-                .padding(.top, 5)
+                .foregroundColor(.white)
+                .padding(.top, 4)
             
-//            HStack {
-//                Text("Width:")
-//                    .frame(width: 60, alignment: .leading)
-//                Stepper("\(gameSettingsManager.customWidth)", value: .init(get: {
-//                    gameSettingsManager.customWidth
-//                }, set: { newCustomWidth in
-//                    gameSettingsManager.updateGameSettings(with: .customWidth(newCustomWidth))
-//                }), in: 5...30)
-//                .frame(maxWidth: .infinity, alignment: .leading)
-//            }
-//            
-//            HStack {
-//                Text("Height:")
-//                    .frame(width: 60, alignment: .leading)
-//                Stepper("\(gameSettingsManager.customHeight)", value: .init(get: {
-//                    gameSettingsManager.customHeight
-//                }, set: { newCustomHeight in
-//                    gameSettingsManager.updateGameSettings(with: .customHeight(newCustomHeight))
-//                }), in: 5...30)
-//                .frame(maxWidth: .infinity, alignment: .leading)
-//            }
-//            
-//            HStack {
-//                Text("Mines:")
-//                    .frame(width: 60, alignment: .leading)
-//                Stepper("\(gameSettingsManager.customMines)", value: .init(get: {
-//                    gameSettingsManager.customMines
-//                }, set: { newCustomMines in
-//                    gameSettingsManager.updateGameSettings(with: .customMines(newCustomMines))
-//                }), in: 1...max(1, gameSettingsManager.customWidth * gameSettingsManager.customHeight - 1))
-//                .frame(maxWidth: .infinity, alignment: .leading)
-//            }
-//            
-//            Text("Maximum mines: \(max(1, gameSettingsManager.customWidth * gameSettingsManager.customHeight - 1))")
-//                .font(.caption)
-//                .foregroundColor(.secondary)
+            HStack {
+                Text("Width:")
+                    .frame(width: 60, alignment: .leading)
+                    .foregroundColor(.white)
+                Stepper("\(viewModel.selectedCustomWidthForBoard)", value: .init(get: {
+                    viewModel.selectedCustomWidthForBoard
+                }, set: { newCustomWidth in
+                    viewModel.updateCustomGameWidth(with: newCustomWidth)
+                }), in: 5...30)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .foregroundColor(.white)
+            }
+            
+            HStack {
+                Text("Height:")
+                    .frame(width: 60, alignment: .leading)
+                    .foregroundColor(.white)
+                Stepper("\(viewModel.selectedCustomHeightForBoard)", value: .init(get: {
+                    viewModel.selectedCustomHeightForBoard
+                }, set: { newCustomHeight in
+                    viewModel.updateCustomGameHeight(with: newCustomHeight)
+                }), in: 5...30)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .foregroundColor(.white)
+            }
+            
+            HStack {
+                Text("Mines:")
+                    .frame(width: 60, alignment: .leading)
+                    .foregroundColor(.white)
+                Stepper("\(viewModel.selectedCustomMinesForBoard)", value: .init(get: {
+                    viewModel.selectedCustomMinesForBoard
+                }, set: { newCustomMines in
+                    viewModel.updateCustomGameMines(with: newCustomMines)
+                }), in: 1...max(1, viewModel.selectedCustomWidthForBoard * viewModel.selectedCustomHeightForBoard - 1))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .foregroundColor(.white)
+            }
+            
+            Text("Maximum mines: \(max(1, viewModel.selectedCustomWidthForBoard * viewModel.selectedCustomHeightForBoard - 1))")
+                .foregroundColor(.white)
+                .font(.caption)
+                .foregroundColor(.secondary)
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 12)
-        .background(Color(uiColor: .systemGray4))
-        .cornerRadius(8)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(.ultraThinMaterial)
+                .opacity(0.8)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(
+                    Color(red: 0.3, green: 0.7, blue: 0.9),
+                    lineWidth: 2
+                )
+        )
+    }
+    
+    private var asd: some View {
+        Label("asdasd", image: "a")
     }
     
     private func startGameButton() -> some View {
@@ -304,7 +299,7 @@ extension MenuView {
                 .font(.title2)
         }
         .buttonStyle(.glassProminent)
-        .tint(Color.blue)
+        .tint(Color.brown)
     }
 }
 
