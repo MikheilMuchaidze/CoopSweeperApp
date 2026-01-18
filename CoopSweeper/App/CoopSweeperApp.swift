@@ -9,23 +9,35 @@ import SwiftUI
 
 @main
 struct CoopSweeperApp: App {
-    // MARK: - Private Properties
+    // MARK: - Coordinator
 
-    @State private var appSettingsManager = DefaultAppSettingsManager()
-    @State private var gameSettingsManager = DefaultGameSettingsManager()
-    private let hapticFeedbackManager = DefaultHapticFeedbackManager()
+    @State private var coordinator = Coordinator()
 
     // MARK: - Body
 
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                MenuView()
-                    .preferredColorScheme(appSettingsManager.theme.colorScheme)
+            NavigationStack(path: $coordinator.path) {
+                MenuViewConfigurator.configureView(
+                    coordinator: coordinator
+                )
+                    .registerViewsFor(navigationPaths: NavigationRoutes.allCases)
+                    .registerSheetViewsFor(sheetDestinations: $coordinator.presentedSheet)
             }
-            .environment(\.hapticFeedbackManager, hapticFeedbackManager)
-            .environment(\.appSettingsManager, appSettingsManager)
-            .environment(\.gameSettingsManager, gameSettingsManager)
         }
+//        WindowGroup {
+//            NavigationStack(path: $coordinator.navigationPath) {
+//                MenuView()
+//                    .preferredColorScheme(appSettingsManager.theme.colorScheme)
+////                    .navigationDestination(for: NavigationDestination.self) { destination in
+////                        coordinator.destinationView(for: destination)
+////                    }
+//            }
+////            .sheet(item: $coordinator.presentedSheet) { destination in
+////                coordinator.sheetView(for: destination)
+////            }
+////            .fullScreenCover(item: $coordinator.presentedFullScreenCover) { destination in
+////                coordinator.fullScreenCoverView(for: destination)
+////            }
     }
 }

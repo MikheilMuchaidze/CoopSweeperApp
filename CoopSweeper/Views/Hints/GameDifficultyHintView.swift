@@ -29,7 +29,6 @@ struct GameDifficultyHintView: View {
 extension GameDifficultyHintView {
     private func content() -> some View {
         AppConstants.mainBackgroundColor
-            .ignoresSafeArea()
             .overlay(content: scrollableContent)
     }
     

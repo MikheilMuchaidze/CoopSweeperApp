@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol GameSettingsManager {
+protocol GameSettingsManagerProtocol {
     // Observed
     var playerName: String { get }
     var difficulty: GameDifficulty { get }
@@ -25,7 +25,7 @@ protocol GameSettingsManager {
 }
 
 @Observable
-final class DefaultGameSettingsManager: GameSettingsManager {
+final class GameSettingsManager: GameSettingsManagerProtocol {
     // MARK: - Published Properties
 
     // General settings

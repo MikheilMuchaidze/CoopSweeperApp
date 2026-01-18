@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol GameEngineManager {
+protocol GameEngineManagerProtocol {
     // Observed
     var cells: [[Cell]] { get }
     var gameOver: Bool { get }
@@ -25,7 +25,7 @@ protocol GameEngineManager {
 }
 
 @Observable
-final class DefaultGameEngineManager: GameEngineManager {
+final class GameEngineManager: GameEngineManagerProtocol {
     // MARK: - Published Properties
 
     var cells: [[Cell]] = []

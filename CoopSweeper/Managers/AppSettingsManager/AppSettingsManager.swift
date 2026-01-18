@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-protocol AppSettingsManager {
+protocol AppSettingsManagerProtocol {
     var soundEnabled: Bool { get }
     var vibrationEnabled: Bool { get }
     var theme: AppTheme { get }
@@ -16,7 +16,7 @@ protocol AppSettingsManager {
 }
 
 @Observable
-final class DefaultAppSettingsManager: AppSettingsManager {
+final class AppSettingsManager: AppSettingsManagerProtocol {
     // MARK: - Private Properties
 
     // AppStorage
@@ -79,16 +79,13 @@ final class DefaultAppSettingsManager: AppSettingsManager {
     }
 }
 
-enum AppSettingsUpdate {
-    case sound(isOn: Bool)
-    case vibrationEnabled(isOn: Bool)
-    case theme(type: AppTheme)
-}
-
-extension DefaultAppSettingsManager: Equatable {
-    static func == (lhs: DefaultAppSettingsManager, rhs: DefaultAppSettingsManager) -> Bool {
-        lhs.soundEnabled == rhs.soundEnabled &&
-        lhs.vibrationEnabled == rhs.vibrationEnabled &&
-        lhs.theme == rhs.theme
+extension AppSettingsManager: Equatable {
+    static func == (
+        lhs: AppSettingsManager,
+        rhs: AppSettingsManager
+    ) -> Bool {
+        lhs.soundEnabled == rhs.soundEnabled
+        && lhs.vibrationEnabled == rhs.vibrationEnabled
+        && lhs.theme == rhs.theme
     }
 }

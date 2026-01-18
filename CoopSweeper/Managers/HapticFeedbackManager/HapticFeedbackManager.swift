@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-protocol HapticFeedbackManager {
+protocol HapticFeedbackManagerProtocol {
     func impact(style: UIImpactFeedbackGenerator.FeedbackStyle)
     func notification(type: UINotificationFeedbackGenerator.FeedbackType)
     func selection()
 }
 
-struct DefaultHapticFeedbackManager: HapticFeedbackManager {
+struct HapticFeedbackManager: HapticFeedbackManagerProtocol {
     // MARK: - Feedback Generators
 
     private let generatorImpact = UIImpactFeedbackGenerator()

@@ -1,5 +1,5 @@
 //
-//  CoopSweeperApp.swift
+//  MenuView.swift
 //  CoopSweeper
 //
 //  Created by Mikheil Muchaidze on 06.04.25.
@@ -8,19 +8,20 @@
 import SwiftUI
 
 struct MenuView: View {
+    // MARK: - ViewModel
+    
+    @State private var viewModel: MenuViewModelProtocol
+    
+    // MARK: - Init
+    
+    init(
+        viewModel: MenuViewModelProtocol
+    ) {
+        self.viewModel = viewModel
+    }
+    
     // MARK: - Private Properties
     
-    // Managers
-    @Environment(\.hapticFeedbackManager) var hapticFeedbackManager
-    @Environment(\.appSettingsManager) var appSettingsManager
-    @Environment(\.gameSettingsManager) var gameSettingsManager
-    // Navigation booleans
-    @State private var presentCoopHintView = false
-    @State private var presentGameDifficultyHintView = false
-    @State private var presentSettingsView = false
-    @State private var presentGameHistoryView = false
-    @State private var startGame = false
-    // Player name validation
     @State private var userNameText: String = ""
     @State private var userNameHasError: Bool? = false
     // Other UI Validation
@@ -35,7 +36,7 @@ struct MenuView: View {
     
     var body: some View {
         AppConstants.mainBackgroundColor
-            .overlay(content: content)
+            .overlay(content: scrollableContent)
             .overlay(alignment: .bottom, content: startGameButton)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -51,64 +52,43 @@ struct MenuView: View {
                     settingsButton
                 }
             }
-            .onAppear {
-                userNameText = ""
-                gameSettingsManager.updateGameSettings(with: .playerName(""))
-            }
-            .navigationDestination(isPresented: $startGame) {
-                BoardView(
-                    gameEngineManager: DefaultGameEngineManager(
-                        rows: gameSettingsManager.boardHeight,
-                        columns: gameSettingsManager.boardWidth,
-                        totalMines: gameSettingsManager.mineCount
-                    )
-                )
-            }
-            .sheet(isPresented: $presentCoopHintView, content: {
-                GameModeHintView()
-            })
-            .sheet(isPresented: $presentGameDifficultyHintView, content: {
-                GameDifficultyHintView()
-            })
-            .sheet(isPresented: $presentSettingsView, content: {
-                SettingsView()
-            })
-            .sheet(isPresented: $presentGameHistoryView, content: {
-                GameHistoryView()
-            })
-            .animation(
-                .easeInOut(duration: 0.3),
-                value: gameSettingsManager.difficulty
-            )
-            .onChange(of: gameSettingsManager.difficulty) { _, newValue in
-                if newValue == .custom {
-                    showCustomDifficultySettings = true
-                } else {
-                    showCustomDifficultySettings = false
-                }
-            }
-            .onChange(of: gameSettingsManager.gameMode) { _, _ in
-                hapticFeedbackManager.impact(style: .soft)
-            }
-            .onChange(of: gameSettingsManager.difficulty) { _, _ in
-                hapticFeedbackManager.impact(style: .soft)
-            }
-            .onChange(of: gameSettingsManager.customWidth) { _, _ in
-                hapticFeedbackManager.impact(style: .soft)
-            }
-            .onChange(of: gameSettingsManager.customHeight) { _, _ in
-                hapticFeedbackManager.impact(style: .soft)
-            }
-            .onChange(of: gameSettingsManager.customMines) { _, _ in
-                hapticFeedbackManager.impact(style: .soft)
-            }
+//            .onAppear {
+//                userNameText = ""
+//                gameSettingsManager.updateGameSettings(with: .playerName(""))
+//            }
+//            .animation(
+//                .easeInOut(duration: 0.3),
+//                value: gameSettingsManager.difficulty
+//            )
+//            .onChange(of: gameSettingsManager.difficulty) { _, newValue in
+//                if newValue == .custom {
+//                    showCustomDifficultySettings = true
+//                } else {
+//                    showCustomDifficultySettings = false
+//                }
+//            }
+//            .onChange(of: gameSettingsManager.gameMode) { _, _ in
+//                hapticFeedbackManager.impact(style: .soft)
+//            }
+//            .onChange(of: gameSettingsManager.difficulty) { _, _ in
+//                hapticFeedbackManager.impact(style: .soft)
+//            }
+//            .onChange(of: gameSettingsManager.customWidth) { _, _ in
+//                hapticFeedbackManager.impact(style: .soft)
+//            }
+//            .onChange(of: gameSettingsManager.customHeight) { _, _ in
+//                hapticFeedbackManager.impact(style: .soft)
+//            }
+//            .onChange(of: gameSettingsManager.customMines) { _, _ in
+//                hapticFeedbackManager.impact(style: .soft)
+//            }
     }
 }
 
 // MARK: - Body Components
 
 extension MenuView {
-    private func content() -> some View {
+    private func scrollableContent() -> some View {
         ScrollView {
             VStack(spacing: 0) {
                 gameModeChooser
@@ -131,15 +111,15 @@ extension MenuView {
                 .font(.title2.weight(.bold))
                 .foregroundStyle(.black)
             
-            CustomTextFieldWithErrorState(
-                text: .init(get: {
-                    gameSettingsManager.playerName
-                }, set: { newName in
-                    gameSettingsManager.updateGameSettings(with: .playerName(newName))
-                }),
-                hasError: $userNameHasError,
-                placeholder: "Enter your name"
-            )
+//            CustomTextFieldWithErrorState(
+//                text: .init(get: {
+//                    gameSettingsManager.playerName
+//                }, set: { newName in
+//                    gameSettingsManager.updateGameSettings(with: .playerName(newName))
+//                }),
+//                hasError: $userNameHasError,
+//                placeholder: "Enter your name"
+//            )
         }
         .padding()
         .background(
@@ -158,10 +138,7 @@ extension MenuView {
                 Spacer()
                 Image(systemName: "questionmark.circle.fill")
                     .foregroundColor(.blue)
-                    .onTapGesture {
-                        hapticFeedbackManager.selection()
-                        presentCoopHintView.toggle()
-                    }
+                    .onTapGesture(perform: viewModel.presentGameModeHintView)
             }
             
             //            Picker("Select Game Mode", selection: .init(get: {
@@ -193,31 +170,28 @@ extension MenuView {
                 Spacer()
                 Image(systemName: "questionmark.circle.fill")
                     .foregroundColor(.blue)
-                    .onTapGesture {
-                        hapticFeedbackManager.selection()
-                        presentGameDifficultyHintView.toggle()
-                    }
+                    .onTapGesture(perform: viewModel.presentGameDifficultyHintView)
             }
             
-            Picker("Select Difficulty", selection: .init(get: {
-                gameSettingsManager.difficulty
-            }, set: { newDifficultyValue in
-                gameSettingsManager.updateGameSettings(with: .difficulty(newDifficultyValue))
-            })) {
-                ForEach(GameDifficulty.allCases, id: \.self) { difficulty in
-                    Text(difficulty.rawValue.capitalized)
-                        .tag(difficulty)
-                }
-            }
-            .pickerStyle(SegmentedPickerStyle())
+//            Picker("Select Difficulty", selection: .init(get: {
+//                gameSettingsManager.difficulty
+//            }, set: { newDifficultyValue in
+//                gameSettingsManager.updateGameSettings(with: .difficulty(newDifficultyValue))
+//            })) {
+//                ForEach(GameDifficulty.allCases, id: \.self) { difficulty in
+//                    Text(difficulty.rawValue.capitalized)
+//                        .tag(difficulty)
+//                }
+//            }
+//            .pickerStyle(SegmentedPickerStyle())
             
-            if gameSettingsManager.difficulty == .custom {
-                ScrollView {
-                    customDifficultySettings
-                }
-                .scrollDismissesKeyboard(.immediately)
-                .scrollIndicators(.hidden)
-            }
+//            if gameSettingsManager.difficulty == .custom {
+//                ScrollView {
+//                    customDifficultySettings
+//                }
+//                .scrollDismissesKeyboard(.immediately)
+//                .scrollIndicators(.hidden)
+//            }
         }
         .padding()
         .background(
@@ -233,42 +207,42 @@ extension MenuView {
                 .font(.headline)
                 .padding(.top, 5)
             
-            HStack {
-                Text("Width:")
-                    .frame(width: 60, alignment: .leading)
-                Stepper("\(gameSettingsManager.customWidth)", value: .init(get: {
-                    gameSettingsManager.customWidth
-                }, set: { newCustomWidth in
-                    gameSettingsManager.updateGameSettings(with: .customWidth(newCustomWidth))
-                }), in: 5...30)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            
-            HStack {
-                Text("Height:")
-                    .frame(width: 60, alignment: .leading)
-                Stepper("\(gameSettingsManager.customHeight)", value: .init(get: {
-                    gameSettingsManager.customHeight
-                }, set: { newCustomHeight in
-                    gameSettingsManager.updateGameSettings(with: .customHeight(newCustomHeight))
-                }), in: 5...30)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            
-            HStack {
-                Text("Mines:")
-                    .frame(width: 60, alignment: .leading)
-                Stepper("\(gameSettingsManager.customMines)", value: .init(get: {
-                    gameSettingsManager.customMines
-                }, set: { newCustomMines in
-                    gameSettingsManager.updateGameSettings(with: .customMines(newCustomMines))
-                }), in: 1...max(1, gameSettingsManager.customWidth * gameSettingsManager.customHeight - 1))
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            
-            Text("Maximum mines: \(max(1, gameSettingsManager.customWidth * gameSettingsManager.customHeight - 1))")
-                .font(.caption)
-                .foregroundColor(.secondary)
+//            HStack {
+//                Text("Width:")
+//                    .frame(width: 60, alignment: .leading)
+//                Stepper("\(gameSettingsManager.customWidth)", value: .init(get: {
+//                    gameSettingsManager.customWidth
+//                }, set: { newCustomWidth in
+//                    gameSettingsManager.updateGameSettings(with: .customWidth(newCustomWidth))
+//                }), in: 5...30)
+//                .frame(maxWidth: .infinity, alignment: .leading)
+//            }
+//            
+//            HStack {
+//                Text("Height:")
+//                    .frame(width: 60, alignment: .leading)
+//                Stepper("\(gameSettingsManager.customHeight)", value: .init(get: {
+//                    gameSettingsManager.customHeight
+//                }, set: { newCustomHeight in
+//                    gameSettingsManager.updateGameSettings(with: .customHeight(newCustomHeight))
+//                }), in: 5...30)
+//                .frame(maxWidth: .infinity, alignment: .leading)
+//            }
+//            
+//            HStack {
+//                Text("Mines:")
+//                    .frame(width: 60, alignment: .leading)
+//                Stepper("\(gameSettingsManager.customMines)", value: .init(get: {
+//                    gameSettingsManager.customMines
+//                }, set: { newCustomMines in
+//                    gameSettingsManager.updateGameSettings(with: .customMines(newCustomMines))
+//                }), in: 1...max(1, gameSettingsManager.customWidth * gameSettingsManager.customHeight - 1))
+//                .frame(maxWidth: .infinity, alignment: .leading)
+//            }
+//            
+//            Text("Maximum mines: \(max(1, gameSettingsManager.customWidth * gameSettingsManager.customHeight - 1))")
+//                .font(.caption)
+//                .foregroundColor(.secondary)
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 12)
@@ -278,14 +252,20 @@ extension MenuView {
     
     private func startGameButton() -> some View {
         Button {
-            if gameSettingsManager.playerName.isEmpty {
+            if false {
+//            if gameSettingsManager.playerName.isEmpty {
                 userNameHasError = true
-                hapticFeedbackManager.notification(type: .error)
+//                hapticFeedbackManager.notification(type: .error)
                 return
             }
             
-            hapticFeedbackManager.notification(type: .success)
-            startGame.toggle()
+//            hapticFeedbackManager.notification(type: .success)
+//            let gameEngine = DefaultGameEngineManager(
+//                rows: gameSettingsManager.boardHeight,
+//                columns: gameSettingsManager.boardWidth,
+//                totalMines: gameSettingsManager.mineCount
+//            )
+//            coordinator.push(.board(gameEngineManager: gameEngine))
         } label: {
             HStack {
                 Text("Start Game")
@@ -311,10 +291,7 @@ extension MenuView {
     }
     
     private var gameHistoryButton: some View {
-        Button {
-            hapticFeedbackManager.selection()
-            presentGameHistoryView.toggle()
-        } label: {
+        Button(action: viewModel.presentGameHistoryView) {
             Image(systemName: "clock.arrow.trianglehead.counterclockwise.rotate.90")
                 .frame(width: 44, height: 44)
                 .foregroundColor(.white)
@@ -325,10 +302,7 @@ extension MenuView {
     }
     
     private var settingsButton: some View {
-        Button {
-            hapticFeedbackManager.selection()
-            presentSettingsView.toggle()
-        } label: {
+        Button(action: viewModel.presentSettingsView) {
             Image(systemName: "gear")
                 .frame(width: 44, height: 44)
                 .foregroundColor(.white)
@@ -341,10 +315,22 @@ extension MenuView {
 
 // MARK: - Preview
 
-#Preview {
-    NavigationStack {
-        MenuView()
-            .environment(\.appSettingsManager, DefaultAppSettingsManager())
-            .environment(\.hapticFeedbackManager, DefaultHapticFeedbackManager())
-    }
-}
+//#Preview {
+//    @Previewable @State var coordinator = Coordinator()
+//    NavigationStack(path: $coordinator.navigationPath) {
+//        MenuView()
+//            .navigationDestination(for: NavigationDestination.self) { destination in
+//                coordinator.destinationView(for: destination)
+//            }
+//    }
+//    .sheet(item: $coordinator.presentedSheet) { destination in
+//        coordinator.sheetView(for: destination)
+//    }
+//    .fullScreenCover(item: $coordinator.presentedFullScreenCover) { destination in
+//        coordinator.fullScreenCoverView(for: destination)
+//    }
+//    .environment(\.coordinator, coordinator)
+//    .environment(\.appSettingsManager, DefaultAppSettingsManager())
+//    .environment(\.gameSettingsManager, DefaultGameSettingsManager())
+//    .environment(\.hapticFeedbackManager, DefaultHapticFeedbackManager())
+//}

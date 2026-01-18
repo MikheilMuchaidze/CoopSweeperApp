@@ -1,10 +1,17 @@
 import SwiftUI
 
 struct SettingsView: View {
-    // MARK: - Private Properties
-
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.appSettingsManager) private var appSettingsManager
+    // MARK: - ViewModel
+    
+    @State private var viewModel: SettingsViewModelProtocol
+    
+    // MARK: - Init
+    
+    init(
+        viewModel: SettingsViewModelProtocol
+    ) {
+        self.viewModel = viewModel
+    }
 
     // MARK: - Body
 
@@ -20,9 +27,10 @@ struct SettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        dismiss()
-                    }
+                    Button(
+                        "Done",
+                        action: viewModel.dismissView
+                    )
                 }
             }
         }
@@ -35,21 +43,24 @@ extension SettingsView {
     private var gameSettingsSection: some View {
         Section(header: Text("Game Settings")) {
             Toggle("Sound Effects", isOn: .init(get: {
-                appSettingsManager.soundEnabled
+                true
+//                appSettingsManager.soundEnabled
             }, set: { newValueForSoundSetting in
-                appSettingsManager.updateSettings(with: .sound(isOn: newValueForSoundSetting))
+////                appSettingsManager.updateSettings(with: .sound(isOn: newValueForSoundSetting))
             }))
 
             Toggle("Haptic Feedback", isOn: .init(get: {
-                appSettingsManager.vibrationEnabled
+                true
+//                appSettingsManager.vibrationEnabled
             }, set: { newValueForVibrationSetting in
-                appSettingsManager.updateSettings(with: .vibrationEnabled(isOn: newValueForVibrationSetting))
+////                appSettingsManager.updateSettings(with: .vibrationEnabled(isOn: newValueForVibrationSetting))
             }))
 
             Picker("Dark Mode", selection: .init(get: {
-                appSettingsManager.theme
+                true
+//                appSettingsManager.theme
             }, set: { newValueForDarkModeSetting in
-                appSettingsManager.updateSettings(with: .theme(type: newValueForDarkModeSetting))
+//                appSettingsManager.updateSettings(with: .theme(type: newValueForDarkModeSetting))
             })) {
                 ForEach(AppTheme.allCases, id: \.self) { appTheme in
                     Text(appTheme.rawValue)
@@ -132,5 +143,11 @@ extension SettingsView {
 // MARK: - Preview
 
 #Preview {
-    SettingsView()
+    let viewModel = SettingsViewModel(
+        coordinator: Coordinator(),
+        appSettingsManager: AppSettingsManager()
+    )
+    SettingsView(
+        viewModel: viewModel
+    )
 }

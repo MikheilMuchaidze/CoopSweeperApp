@@ -33,7 +33,6 @@ struct GameModeHintView: View {
 extension GameModeHintView {
     private func content() -> some View {
         AppConstants.mainBackgroundColor
-            .ignoresSafeArea()
             .overlay(content: scrollableContent)
     }
     
