@@ -7,26 +7,6 @@
 
 import SwiftUI
 
-//@MainActor
-//extension View {
-//    func registerSheetViewsFor<T: NavigationPathProtocol>(sheetDestinations: Binding<T?>) -> some View {
-//        sheet(item: sheetDestinations) { destination in
-//            let sheetPage: AnyView = switch destination {
-//            case let mainNavigationSheets as NavigationSheets:
-//                switch mainNavigationSheets {
-//                case .groupDetails:
-//                    AnyView(EmptyView())
-//                }
-//            default:
-//                AnyView(EmptyView())
-//            }
-//            
-//            return sheetPage
-//                .presentationDragIndicator(.visible)
-//        }
-//    }
-//}
-
 @MainActor
 extension View {
     func registerSheetViewsFor<T: NavigationPathProtocol>(
@@ -41,10 +21,9 @@ extension View {
                     GameModeHintView()
                 case .gameDifficultyHintView:
                     GameDifficultyHintView()
-                case let .settingsView(input: settingsViewInputs):
-                    EmptyView()
+                case let .settingsView(inputs: settingsViewInputs):
                     SettingsViewConfigurator.configureView(
-                        viewInputs: settingsViewInputs
+                        inputs: settingsViewInputs
                     )
                 case .gameHistoryView:
                     GameHistoryView()

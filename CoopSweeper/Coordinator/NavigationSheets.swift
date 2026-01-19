@@ -10,7 +10,7 @@ import Foundation
 enum NavigationSheets: NavigationPathProtocol {
     case gameModeHintView
     case gameDifficultyHintView
-    case settingsView(input: SettingsConfiguratorInputs)
+    case settingsView(inputs: SettingsConfiguratorInputs)
     case gameHistoryView
 
     var id: String {
@@ -31,7 +31,7 @@ enum NavigationSheets: NavigationPathProtocol {
             .gameModeHintView,
             .gameDifficultyHintView,
             .settingsView(
-                input: SettingsConfiguratorInputs(
+                inputs: SettingsConfiguratorInputs(
                     coordinator: Coordinator(),
                     appSettingsManager: AppSettingsManager()
                 )

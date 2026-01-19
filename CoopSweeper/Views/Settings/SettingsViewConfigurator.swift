@@ -9,11 +9,11 @@ import SwiftUI
 
 enum SettingsViewConfigurator {
     static func configureView(
-        viewInputs: SettingsConfiguratorInputs
+        inputs: SettingsConfiguratorInputs
     ) -> some View {
         let settingsViewModel = SettingsViewModel(
-            coordinator: viewInputs.coordinator,
-            appSettingsManager: viewInputs.appSettingsManager
+            coordinator: inputs.coordinator,
+            appSettingsManager: inputs.appSettingsManager
         )
         let settingsView = SettingsView(
             viewModel: settingsViewModel

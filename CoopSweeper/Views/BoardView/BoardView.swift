@@ -1,13 +1,41 @@
-////
-////  BoardView.swift
-////  CoopSweeper
-////
-////  Created by Mikheil Muchaidze on 06.04.25.
-////
 //
-//import SwiftUI
-//import Combine
+//  BoardView.swift
+//  CoopSweeper
 //
+//  Created by Mikheil Muchaidze on 06.04.25.
+//
+
+import SwiftUI
+
+struct BoardView: View {
+    // MARK: - ViewModel
+    
+    @State private var viewModel: BoardViewModelProtocol
+    
+    // MARK: - Init
+    
+    init(
+        viewModel: BoardViewModelProtocol
+    ) {
+        self.viewModel = viewModel
+    }
+    
+    // MARK: - Body
+    
+    var body: some View {
+        AppConstants.mainBackgroundColor
+            .overlay(content: content)
+    }
+}
+
+// MARK: - Body Components
+
+extension BoardView {
+    private func content() -> some View {
+        Text("Board View")
+    }
+}
+
 //struct BoardView: View {
 //    // MARK: - Private Properties
 //
@@ -141,9 +169,9 @@
 //        return String(format: "%02d:%02d", minutes, seconds)
 //    }
 //}
-//
-//// MARK: - Body Components
-//
+
+// MARK: - Body Components
+
 //extension BoardView {
 //    private var playerNameSection: some View {
 //        Text(gameSettingsManager.playerName + "is playing")
@@ -258,20 +286,20 @@
 //        }
 //    }
 //}
-//
-//// MARK: - Preview
-//
-////#Preview {
-////    NavigationStack {
-////        let defaultGameEngineManager = DefaultGameEngineManager(
-////            rows: 12,
-////            columns: 12,
-////            totalMines: 10
-////        )
-////        let defaultGameSettingsManager = DefaultGameSettingsManager()
-////        defaultGameSettingsManager.updateGameSettings(with: .playerName("123ijij"))
-////        return BoardView(gameEngineManager: defaultGameEngineManager)
-////            .environment(\.appSettingsManager, DefaultAppSettingsManager())
-////            .environment(\.gameSettingsManager, defaultGameSettingsManager)
-////    }
-////}
+
+// MARK: - Preview
+
+//#Preview {
+//    NavigationStack {
+//        let defaultGameEngineManager = DefaultGameEngineManager(
+//            rows: 12,
+//            columns: 12,
+//            totalMines: 10
+//        )
+//        let defaultGameSettingsManager = DefaultGameSettingsManager()
+//        defaultGameSettingsManager.updateGameSettings(with: .playerName("123ijij"))
+//        return BoardView(gameEngineManager: defaultGameEngineManager)
+//            .environment(\.appSettingsManager, DefaultAppSettingsManager())
+//            .environment(\.gameSettingsManager, defaultGameSettingsManager)
+//    }
+//}

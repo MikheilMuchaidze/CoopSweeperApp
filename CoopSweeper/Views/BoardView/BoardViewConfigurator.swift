@@ -1,24 +1,24 @@
 //
-//  MenuViewConfigurator.swift
+//  BoardViewConfigurator.swift
 //  CoopSweeper
 //
-//  Created by MikheilMuchaidze on 18.01.2026.
+//  Created by MikheilMuchaidze on 19.01.2026.
 //
 
 import SwiftUI
 
-enum MenuViewConfigurator {
+enum BoardViewConfigurator {
     static func configureView(
-        inputs: MenuViewConfiguratorInputs
+        inputs: BoardViewConfiguratorInputs
     ) -> some View {
-        let menuViewModel = MenuViewModel(
+        let boardViewModel = BoardViewModel(
             coordinator: inputs.coordinator,
             hapticFeedbackManager: inputs.hapticFeedbackManager,
             appSettingsManager: inputs.appSettingsManager,
             gameSettingsManager: inputs.gameSettingsManager
         )
         
-        let menuView = MenuView(viewModel: menuViewModel)
-        return menuView
+        let boardView = BoardView(viewModel: boardViewModel)
+        return boardView
     }
 }

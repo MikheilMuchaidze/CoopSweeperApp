@@ -8,12 +8,25 @@
 import Foundation
 
 enum NavigationRoutes: NavigationPathProtocol {
-    case gameView
+    case boardView(inputs: BoardViewConfiguratorInputs)
 
     var id: String {
         switch self {
-        case .gameView:
-            "gameView"
+        case .boardView:
+            "boardView"
         }
+    }
+    
+    static var allCases: [NavigationRoutes] {
+        [
+            .boardView(
+                inputs: BoardViewConfiguratorInputs(
+                    coordinator: Coordinator(),
+                    hapticFeedbackManager: HapticFeedbackManager(),
+                    appSettingsManager: AppSettingsManager(),
+                    gameSettingsManager: GameSettingsManager()
+                )
+            )
+        ]
     }
 }

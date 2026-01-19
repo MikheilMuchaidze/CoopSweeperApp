@@ -101,7 +101,7 @@ final class MenuViewModel: MenuViewModelProtocol {
             coordinator: coordinator,
             appSettingsManager: appSettingsManager
         )
-        coordinator.present(sheet: .settingsView(input: settingsViewInputs))
+        coordinator.present(sheet: .settingsView(inputs: settingsViewInputs))
     }
     
     func updateGameMode(with newValue: GameMode) {
@@ -174,6 +174,12 @@ final class MenuViewModel: MenuViewModelProtocol {
     
     func startGame() {
         hapticFeedbackManager.notification(type: .success)
-        coordinator.navigate(to: .gameView)
+        let boardViewInputs = BoardViewConfiguratorInputs(
+            coordinator: coordinator,
+            hapticFeedbackManager: hapticFeedbackManager,
+            appSettingsManager: appSettingsManager,
+            gameSettingsManager: gameSettingsManager
+        )
+        coordinator.navigate(to: .boardView(inputs: boardViewInputs))
     }
 }

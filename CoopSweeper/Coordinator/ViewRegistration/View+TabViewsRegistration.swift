@@ -15,8 +15,10 @@ extension View {
                 switch destination {
                 case let mainNavigationRoutes as NavigationRoutes:
                     switch mainNavigationRoutes {
-                    case .gameView:
-                        EmptyView()
+                    case let .boardView(boardViewInputs):
+                        BoardViewConfigurator.configureView(
+                            inputs: boardViewInputs
+                        )
                     }
                 default:
                     EmptyView()

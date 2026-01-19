@@ -6,9 +6,6 @@
 //
 
 protocol CoordinatorProtocol {
-//    associatedtype Route: NavigationPathProtocol
-//    associatedtype Sheet: NavigationPathProtocol
-
     var path: [NavigationRoutes] { get set }
     var presentedSheet: (NavigationSheets)? { get set }
     var dismiss: (() -> ())? { get set }

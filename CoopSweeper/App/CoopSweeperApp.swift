@@ -11,12 +11,21 @@ import SwiftUI
 struct CoopSweeperApp: App {
     // MARK: - Coordinator
 
-    @State private var coordinator = Coordinator()
+    @State private var coordinator: CoordinatorProtocol
+    
+    // MARK: - Managers
+    
+    private let hapticFeedbackManager: HapticFeedbackManagerProtocol
+    private let appSettingsManager: AppSettingsManagerProtocol
+    private let gameSettingsManager: GameSettingsManagerProtocol
     
     // MARK: - Init
     
     init() {
-        UIApplication.shared.windows.first?.overrideUserInterfaceStyle = .light
+        self.coordinator = Coordinator()
+        self.hapticFeedbackManager = HapticFeedbackManager()
+        self.appSettingsManager = AppSettingsManager()
+        self.gameSettingsManager = GameSettingsManager()
     }
 
     // MARK: - Body
@@ -25,7 +34,12 @@ struct CoopSweeperApp: App {
         WindowGroup {
             NavigationStack(path: $coordinator.path) {
                 MenuViewConfigurator.configureView(
-                    coordinator: coordinator
+                    inputs: MenuViewConfiguratorInputs(
+                        coordinator: coordinator,
+                        hapticFeedbackManager: hapticFeedbackManager,
+                        appSettingsManager: appSettingsManager,
+                        gameSettingsManager: gameSettingsManager
+                    )
                 )
                     .registerViewsFor(navigationPaths: NavigationRoutes.allCases)
                     .registerSheetViewsFor(sheetDestinations: $coordinator.presentedSheet)
