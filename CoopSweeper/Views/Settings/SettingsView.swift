@@ -49,7 +49,6 @@ extension SettingsView {
                 SettingsCard(title: "About", content: aboutSection)
                 SettingsCard(title: "Links", content: linksSection)
                 creditsSection()
-//                SettingsCard(title: "Credits", content: creditsSection)
             }
         }
     }

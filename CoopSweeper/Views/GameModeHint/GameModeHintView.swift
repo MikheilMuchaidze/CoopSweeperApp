@@ -13,11 +13,6 @@ struct GameModeHintView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .presentationDragIndicator(.visible)
                 .toolbar {
-                    ToolbarItem(placement: .principal) {
-                        Text("Game Modes Guide")
-                            .font(.body)
-                            .bold()
-                    }
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button("Done", action: { dismiss() })
                     }
@@ -37,6 +32,10 @@ extension GameModeHintView {
     private func scrollableContent() -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
+                Label("Game Modes Guide", systemImage: "chart.bar.fill")
+                    .foregroundStyle(Color(red: 0.3, green: 0.7, blue: 0.9))
+                    .font(.title.bold())
+
                 modeSection(
                     title: "Local Mode",
                     description: "Play on your own device. Challenge yourself to clear the board without hitting any mines. Perfect for solo play and improving your skills.",
@@ -74,18 +73,19 @@ extension GameModeHintView {
 
                     Text(title)
                         .font(.title2)
+                        .foregroundStyle(.white)
                         .bold()
                 }
 
                 Text(description)
                     .font(.body)
-                    .foregroundColor(Color(red: 0, green: 0, blue: 0))
+                    .foregroundStyle(.white)
                 Spacer()
             }
             Spacer()
         }
         .padding()
-        .background(Color(uiColor: .systemGray4))
+        .background(.ultraThinMaterial.opacity(0.5))
         .cornerRadius(12)
     }
 
@@ -94,17 +94,22 @@ extension GameModeHintView {
             VStack(alignment: .leading, spacing: 15) {
                 Text("How Coop Mode Works")
                     .font(.title2)
+                    .foregroundStyle(.white)
                     .bold()
 
                 Text("1. Players take turns revealing cells on the board")
+                    .foregroundStyle(.white)
                 Text("2. If a player reveals a mine, the game ends")
+                    .foregroundStyle(.white)
                 Text("3. The goal is to work together to clear the entire board")
+                    .foregroundStyle(.white)
                 Text("4. Communication is essential - discuss your strategy!")
+                    .foregroundStyle(.white)
             }
             Spacer()
         }
         .padding()
-        .background(Color(uiColor: .systemGray4))
+        .background(.ultraThinMaterial.opacity(0.5))
         .cornerRadius(12)
     }
 }

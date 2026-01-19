@@ -10,8 +10,7 @@ struct GameDifficultyHintView: View {
     var body: some View {
         NavigationStack {
             content()
-                .navigationTitle("Game Difficulty Guide")
-                .navigationBarTitleDisplayMode(.large)
+                .navigationBarTitleDisplayMode(.inline)
                 .presentationDragIndicator(.visible)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
@@ -33,6 +32,10 @@ extension GameDifficultyHintView {
     private func scrollableContent() -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
+                Label("Game Difficulty Guide", systemImage: "chart.bar.fill")
+                    .foregroundStyle(Color(red: 0.3, green: 0.7, blue: 0.9))
+                    .font(.title.bold())
+
                 difficultySection(
                     title: "Easy",
                     description: "Perfect for beginners! A small board with few mines to help you learn the basics of the game.",
@@ -82,17 +85,18 @@ extension GameDifficultyHintView {
 
                     Text(title)
                         .font(.title2)
+                        .foregroundColor(.white)
                         .bold()
                 }
 
                 Text(description)
                     .font(.body)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.white)
             }
             Spacer()
         }
         .padding()
-        .background(Color(uiColor: .systemGray4))
+        .background(.ultraThinMaterial.opacity(0.5))
         .cornerRadius(12)
     }
 }
