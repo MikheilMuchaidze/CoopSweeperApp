@@ -17,22 +17,24 @@ struct SettingsView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                gameSettingsSection
-                aboutSection
-                linksSection
-                creditsSection
-            }
-            .navigationTitle("Settings")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(
-                        "Done",
-                        action: viewModel.dismissView
-                    )
+            AppConstants.mainBackgroundColor
+                .overlay(content: content)
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Text("Settings")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundColor(.white)
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(
+                            "Done",
+                            action: viewModel.dismissView
+                        )
+                        .buttonStyle(.glassProminent)
+                        .tint(Color.brown)
+                    }
                 }
-            }
+                .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
@@ -40,99 +42,211 @@ struct SettingsView: View {
 // MARK: - Body Components
 
 extension SettingsView {
-    private var gameSettingsSection: some View {
-        Section(header: Text("Game Settings")) {
-            Toggle("Sound Effects", isOn: .init(get: {
-                viewModel.getSoundEffectsSetting()
-            }, set: { newValueForSoundSetting in
-                viewModel.updateSoundEffectSetting(with: newValueForSoundSetting)
-            }))
-
-            Toggle("Haptic Feedback", isOn: .init(get: {
-                viewModel.getVibrationSetting()
-            }, set: { newValueForVibrationSetting in
-                viewModel.updateVibrationSetting(with: newValueForVibrationSetting)
-            }))
-
-            Picker("Dark Mode", selection: .init(get: {
-                viewModel.getCurrentThemeSetting()
-            }, set: { newValueForDarkModeSetting in
-                viewModel.updateCurrentThemeSetting(with: newValueForDarkModeSetting)
-            })) {
-                ForEach(AppTheme.allCases, id: \.self) { appTheme in
-                    Text(appTheme.rawValue)
-                        .tag(appTheme)
-                }
+    private func content() -> some View {
+        ScrollView(.vertical) {
+            VStack(alignment: .leading, spacing: 20) {
+                SettingsCard(title: "Game Settings", content: gameSettingsSection)
+                SettingsCard(title: "About", content: aboutSection)
+                SettingsCard(title: "Links", content: linksSection)
+                creditsSection()
+//                SettingsCard(title: "Credits", content: creditsSection)
             }
-            .tint(.blue)
+        }
+    }
+    
+    private func gameSettingsSection() -> some View {
+        VStack(alignment: .leading, spacing: .zero) {
+            SettingsRow(title: "Sound Effects") {
+                Toggle("", isOn: .init(
+                    get: viewModel.getSoundEffectsSetting,
+                    set: viewModel.updateSoundEffectSetting
+                ))
+                .labelsHidden()
+            }
+
+            SettingsRow(title: "Haptic Feedback") {
+                Toggle("", isOn: .init(
+                    get: viewModel.getVibrationSetting,
+                    set: viewModel.updateVibrationSetting
+                ))
+                .labelsHidden()
+            }
+
+            SettingsRow(title: "Dark Mode") {
+                Picker("", selection: .init(
+                    get: viewModel.getCurrentThemeSetting,
+                    set: viewModel.updateCurrentThemeSetting
+                )) {
+                    ForEach(AppTheme.allCases, id: \.self) { theme in
+                        Text(theme.rawValue)
+                            .tag(theme)
+                    }
+                }
+                .pickerStyle(.menu)
+                .tint(Color(red: 0.3, green: 0.7, blue: 0.9))
+            }
         }
     }
 
-    private var aboutSection: some View {
-        Section(header: Text("About")) {
-            HStack {
-                Text("Version")
-                Spacer()
+    private func aboutSection() -> some View {
+        VStack(alignment: .leading, spacing: .zero) {
+            SettingsRow(title: "Version") {
                 Text("1.0.0")
-                    .foregroundColor(.secondary)
+                    .foregroundColor(Color(red: 0.3, green: 0.7, blue: 0.9))
             }
-
-            HStack {
-                Text("Developer")
-                Spacer()
+            
+            SettingsRow(title: "Developer") {
                 Text("Mikheil Muchaidze")
-                    .foregroundColor(.secondary)
+                    .foregroundColor(Color(red: 0.3, green: 0.7, blue: 0.9))
             }
-
+            
             HStack {
                 Text("© 2025 CoopSweeper")
+                    .foregroundColor(.white)
                 Spacer()
             }
             .font(.caption)
-            .foregroundColor(.secondary)
+            .padding()
         }
     }
 
-    private var linksSection: some View {
-        Section(header: Text("Links")) {
-            Button(action: viewModel.navigateToPrivacyPolices) {
+    private func linksSection() -> some View {
+        VStack(alignment: .leading, spacing: .zero) {
+            SettingsRow(
+                title: "Privacy Policy"
+            ) {
                 HStack {
-                    Text("Privacy Policy")
                     Spacer()
                     Image(systemName: "arrow.up.right.square")
+                    .foregroundColor(Color(red: 0.3, green: 0.7, blue: 0.9))
                 }
-                .foregroundColor(.blue)
             }
+            .onTapGesture(perform: viewModel.navigateToPrivacyPolices)
             
-            Button(action: viewModel.navigateToTermsAndConditions) {
+            SettingsRow(
+                title: "Terms of Service"
+            ) {
                 HStack {
-                    Text("Terms of Service")
                     Spacer()
                     Image(systemName: "arrow.up.right.square")
+                    .foregroundColor(Color(red: 0.3, green: 0.7, blue: 0.9))
                 }
-                .foregroundColor(.blue)
             }
+            .onTapGesture(perform: viewModel.navigateToTermsAndConditions)
             
-            Button(action: viewModel.navigateToSupport) {
+            SettingsRow(
+                title: "Support"
+            ) {
                 HStack {
-                    Text("Support")
                     Spacer()
                     Image(systemName: "arrow.up.right.square")
+                    .foregroundColor(Color(red: 0.3, green: 0.7, blue: 0.9))
                 }
-                .foregroundColor(.blue)
             }
+            .onTapGesture(perform: viewModel.navigateToSupport)
         }
     }
 
-    private var creditsSection: some View {
-        Section(header: Text("Credits")) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Icons: SF Symbols by Apple")
-                Text("Sounds: FreeSound.org")
-                Text("Special thanks to all beta testers!")
+    private func creditsSection() -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Credits")
+                .font(.headline)
+                .foregroundColor(.white)
+                .padding(.horizontal, 16)
+
+            HStack(spacing: .zero) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Icons: SF Symbols by Apple")
+                    Text("Sounds: FreeSound.org")
+                    Text("Special thanks to all beta testers!")
+                }
+                .padding()
+                .font(.caption)
+                .foregroundColor(.white)
+                
+                Spacer()
             }
-            .font(.caption)
-            .foregroundColor(.secondary)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(.ultraThinMaterial.opacity(0.5))
+            )
+        }
+        .padding(.horizontal, 20)
+    }
+}
+
+private struct SettingsCard<Content: View>: View {
+    // MARK: - Private Properties
+    
+    private let title: String
+    private let content: Content
+    
+    // MARK: - Init
+    
+    init(
+        title: String,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.title = title
+        self.content = content()
+    }
+    
+    // MARK: - Body
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(title)
+                .font(.headline)
+                .foregroundColor(.white)
+                .padding(.horizontal, 16)
+            
+            VStack(spacing: 0) {
+                content
+            }
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(.ultraThinMaterial.opacity(0.5))
+            )
+        }
+        .padding(.horizontal, 16)
+    }
+}
+
+private struct SettingsRow<RightView: View>: View {
+    // MARK: - Private Properties
+    
+    private let title: String
+    private let titleColor: Color?
+    private let right: RightView
+    
+    // MARK: - Init
+    
+    init(
+        title: String,
+        titleColor: Color? = .white,
+        @ViewBuilder right: () -> RightView
+    ) {
+        self.title = title
+        self.titleColor = titleColor
+        self.right = right()
+    }
+    
+    // MARK: - Body
+
+    var body: some View {
+        HStack {
+            Text(title)
+                .ifTrue(titleColor) { view, titleColor in
+                    view
+                        .foregroundStyle(titleColor)
+                }
+            Spacer()
+            right
+        }
+        .padding()
+        .overlay(alignment: .bottom) {
+            Divider()
+                .padding(.leading)
         }
     }
 }

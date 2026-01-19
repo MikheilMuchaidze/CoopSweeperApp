@@ -22,6 +22,7 @@ extension View {
                     EmptyView()
                 }
             }
+            .preferredColorScheme(.light)
         }
     }
 }

@@ -12,6 +12,12 @@ struct CoopSweeperApp: App {
     // MARK: - Coordinator
 
     @State private var coordinator = Coordinator()
+    
+    // MARK: - Init
+    
+    init() {
+        UIApplication.shared.windows.first?.overrideUserInterfaceStyle = .light
+    }
 
     // MARK: - Body
 

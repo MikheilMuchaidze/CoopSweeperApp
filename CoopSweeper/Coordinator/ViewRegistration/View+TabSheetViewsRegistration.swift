@@ -55,5 +55,6 @@ extension View {
             }
         }
         .presentationDragIndicator(.visible)
+        .preferredColorScheme(.light)
     }
 }

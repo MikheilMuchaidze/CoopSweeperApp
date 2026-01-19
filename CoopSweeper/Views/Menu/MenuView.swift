@@ -44,9 +44,9 @@ struct MenuView: View {
                     gameHistoryButton
                 }
                 ToolbarItem(placement: .principal) {
-                    Text("CoopSweeper")
+                    Text("CoopSweeper 💣")
                         .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(red: 0.3, green: 0.7, blue: 0.9))
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     settingsButton
@@ -269,7 +269,7 @@ extension MenuView {
                 .font(.title2)
         }
         .buttonStyle(.glassProminent)
-        .tint(Color(uiColor: .systemGray4))
+        .tint(.gray)
     }
     
     private var settingsButton: some View {
@@ -361,5 +361,19 @@ extension View {
                 .frame(height: height)
             }
         )
+    }
+}
+
+extension View {
+    @ViewBuilder
+    func ifTrue<T, Content: View>(
+        _ value: T?,
+        transform: (Self, T) -> Content
+    ) -> some View {
+        if let value {
+            transform(self, value)
+        } else {
+            self
+        }
     }
 }
