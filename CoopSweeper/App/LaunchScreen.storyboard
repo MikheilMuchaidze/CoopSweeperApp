@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24412" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24405"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="EHf-IW-A2E">
+            <objects>
+                <viewController id="01J-lp-oVM" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" insetsLayoutMarginsFromSafeArea="NO" image="LaunchScreenBackground" translatesAutoresizingMaskIntoConstraints="NO" id="f2P-jA-NqF">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchScreenAppIcon" translatesAutoresizingMaskIntoConstraints="NO" id="0ce-6e-HUY">
+                                <rect key="frame" x="121.66666666666669" y="265.66666666666669" width="150" height="150"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="0ce-6e-HUY" secondAttribute="height" multiplier="1:1" id="A9y-D5-xY2"/>
+                                    <constraint firstAttribute="width" constant="150" id="vtf-m2-eiW"/>
+                                </constraints>
+                            </imageView>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="jja-au-oic">
+                                <rect key="frame" x="77.666666666666686" y="432" width="238" height="73"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9i2-31-HU2">
+                                        <rect key="frame" x="0.0" y="0.0" width="238" height="43"/>
+                                        <subviews>
+                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Coop" textAlignment="center" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" minimumFontSize="18" translatesAutoresizingMaskIntoConstraints="NO" id="GJd-Yh-RWb">
+                                                <rect key="frame" x="0.0" y="0.0" width="90" height="43"/>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="36"/>
+                                                <color key="textColor" systemColor="tintColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sweeper" textAlignment="center" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" minimumFontSize="18" translatesAutoresizingMaskIntoConstraints="NO" id="8Lr-Jg-Q18">
+                                                <rect key="frame" x="90" y="0.0" width="148" height="43"/>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="36"/>
+                                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                    </stackView>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TEAM UP TO DEFUSE" textAlignment="center" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" minimumFontSize="18" translatesAutoresizingMaskIntoConstraints="NO" id="xG8-24-Wb6">
+                                        <rect key="frame" x="0.0" y="55" width="238" height="18"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                        <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="0ce-6e-HUY" firstAttribute="centerX" secondItem="f2P-jA-NqF" secondAttribute="centerX" id="4va-EB-ij1"/>
+                            <constraint firstItem="jja-au-oic" firstAttribute="centerY" secondItem="f2P-jA-NqF" secondAttribute="centerY" multiplier="1.1" id="51C-eu-QdE"/>
+                            <constraint firstItem="0ce-6e-HUY" firstAttribute="centerY" secondItem="f2P-jA-NqF" secondAttribute="centerY" multiplier="0.8" id="7cd-J3-nza"/>
+                            <constraint firstAttribute="bottom" secondItem="f2P-jA-NqF" secondAttribute="bottom" id="Oxh-QV-dgd"/>
+                            <constraint firstItem="f2P-jA-NqF" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="UhT-WR-vPA"/>
+                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="trailing" secondItem="f2P-jA-NqF" secondAttribute="trailing" id="VV6-D0-iA4"/>
+                            <constraint firstItem="f2P-jA-NqF" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" id="faf-Gi-K3n"/>
+                            <constraint firstItem="jja-au-oic" firstAttribute="centerX" secondItem="f2P-jA-NqF" secondAttribute="centerX" id="gs0-IV-D1z"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="52.671755725190835" y="374.64788732394368"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="LaunchScreenAppIcon" width="262" height="261"/>
+        <image name="LaunchScreenBackground" width="589" height="1280"/>
+        <systemColor name="tintColor">
+            <color red="0.0" green="0.53333333333333333" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>
