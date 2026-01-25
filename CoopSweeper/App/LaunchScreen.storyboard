@@ -75,7 +75,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="LaunchScreenAppIcon" width="262" height="261"/>
+        <image name="LaunchScreenAppIcon" width="2048" height="2048"/>
         <image name="LaunchScreenBackground" width="589" height="1280"/>
         <systemColor name="tintColor">
             <color red="0.0" green="0.53333333333333333" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
