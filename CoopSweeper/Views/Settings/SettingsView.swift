@@ -19,6 +19,7 @@ struct SettingsView: View {
         NavigationStack {
             AppConstants.mainBackgroundColor
                 .overlay(content: content)
+                .presentationDragIndicator(.visible)
                 .toolbar {
                     ToolbarItem(placement: .principal) {
                         Text("Settings")
