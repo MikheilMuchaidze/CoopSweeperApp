@@ -15,7 +15,8 @@ enum BoardViewConfigurator {
             coordinator: inputs.coordinator,
             hapticFeedbackManager: inputs.hapticFeedbackManager,
             appSettingsManager: inputs.appSettingsManager,
-            gameSettingsManager: inputs.gameSettingsManager
+            gameSettingsManager: inputs.gameSettingsManager,
+            gameEngineManager: inputs.gameEngineManager
         )
         
         let boardView = BoardView(viewModel: boardViewModel)

@@ -14,7 +14,7 @@
 		245265812F26088E00CD9D8C /* Exceptions for "CoopSweeper" folder in "CoopSweeper" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				App/Info.plist,
 			);
 			target = 2FC3CEE72DA2F9CA009139AD /* CoopSweeper */;
 		};
@@ -268,7 +268,7 @@
 				DEVELOPMENT_TEAM = SH225JG2GM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = CoopSweeper/Info.plist;
+				INFOPLIST_FILE = CoopSweeper/App/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -299,7 +299,7 @@
 				DEVELOPMENT_TEAM = SH225JG2GM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = CoopSweeper/Info.plist;
+				INFOPLIST_FILE = CoopSweeper/App/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

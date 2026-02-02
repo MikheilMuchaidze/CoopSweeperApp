@@ -24,7 +24,8 @@ enum NavigationRoutes: NavigationPathProtocol {
                     coordinator: Coordinator(),
                     hapticFeedbackManager: HapticFeedbackManager(),
                     appSettingsManager: AppSettingsManager(),
-                    gameSettingsManager: GameSettingsManager()
+                    gameSettingsManager: GameSettingsManager(),
+                    gameEngineManager: GameEngineManager(rows: 9, columns: 9, totalMines: 10)
                 )
             )
         ]

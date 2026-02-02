@@ -178,7 +178,12 @@ final class MenuViewModel: MenuViewModelProtocol {
             coordinator: coordinator,
             hapticFeedbackManager: hapticFeedbackManager,
             appSettingsManager: appSettingsManager,
-            gameSettingsManager: gameSettingsManager
+            gameSettingsManager: gameSettingsManager,
+            gameEngineManager: GameEngineManager(
+                rows: gameSettingsManager.boardHeight,
+                columns: gameSettingsManager.boardWidth,
+                totalMines: gameSettingsManager.mineCount
+            )
         )
         coordinator.navigate(to: .boardView(inputs: boardViewInputs))
     }

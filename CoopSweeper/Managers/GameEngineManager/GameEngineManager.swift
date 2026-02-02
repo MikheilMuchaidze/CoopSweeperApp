@@ -9,7 +9,7 @@ import Foundation
 
 protocol GameEngineManagerProtocol {
     // Observed
-    var cells: [[Cell]] { get }
+    var cells: [[BoardCellViewConfig]] { get }
     var gameOver: Bool { get }
     var gameWon: Bool { get }
     var remainingMines: Int { get }
@@ -28,7 +28,7 @@ protocol GameEngineManagerProtocol {
 final class GameEngineManager: GameEngineManagerProtocol {
     // MARK: - Published Properties
 
-    var cells: [[Cell]] = []
+    var cells: [[BoardCellViewConfig]] = []
     var gameOver: Bool = false
     var gameWon: Bool = false
     var remainingMines: Int
@@ -57,12 +57,12 @@ final class GameEngineManager: GameEngineManagerProtocol {
 
     private func initializeEmptyBoard() {
         // Initialize empty board
-        var newCells: [[Cell]] = []
+        var newCells: [[BoardCellViewConfig]] = []
         for row in 0..<rows {
-            var rowCells: [Cell] = []
+            var rowCells: [BoardCellViewConfig] = []
             for col in 0..<columns {
                 rowCells.append(
-                    Cell(
+                    BoardCellViewConfig(
                         row: row,
                         column: col,
                         isMine: false,
