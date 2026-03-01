@@ -12,11 +12,7 @@ struct GameDifficultyHintView: View {
             content()
                 .navigationBarTitleDisplayMode(.inline)
                 .presentationDragIndicator(.visible)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("Done", action: { dismiss() })
-                    }
-                }
+                .toolbar(content: toolbarContenr)
         }
     }
 }
@@ -101,8 +97,19 @@ extension GameDifficultyHintView {
     }
 }
 
+// MARK: - Toolbar Content
+
+extension GameDifficultyHintView {
+    @ToolbarContentBuilder
+    private func toolbarContenr() -> some ToolbarContent {
+        ToolbarItem(placement: .navigationBarTrailing) {
+            Button("Done", action: { dismiss() })
+        }
+    }
+}
+
 // MARK: - Preview
 
 #Preview {
     GameDifficultyHintView()
-} 
+}

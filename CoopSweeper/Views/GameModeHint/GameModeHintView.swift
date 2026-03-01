@@ -12,11 +12,7 @@ struct GameModeHintView: View {
             content()
                 .navigationBarTitleDisplayMode(.inline)
                 .presentationDragIndicator(.visible)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("Done", action: { dismiss() })
-                    }
-                }
+                .toolbar(content: toolbarContenr)
         }
     }
 }
@@ -114,8 +110,18 @@ extension GameModeHintView {
     }
 }
 
-// MARK: - Preview
+// MARK: - Toolbar Content
 
+extension GameModeHintView {
+    @ToolbarContentBuilder
+    private func toolbarContenr() -> some ToolbarContent {
+        ToolbarItem(placement: .navigationBarTrailing) {
+            Button("Done", action: { dismiss() })
+        }
+    }
+}
+
+// MARK: - Preview
 
 #Preview {
     GameModeHintView()

@@ -20,21 +20,7 @@ struct SettingsView: View {
             AppConstants.mainBackgroundColor
                 .overlay(content: content)
                 .presentationDragIndicator(.visible)
-                .toolbar {
-                    ToolbarItem(placement: .principal) {
-                        Text("Settings")
-                            .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(.white)
-                    }
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button(
-                            "Done",
-                            action: viewModel.dismissView
-                        )
-                        .buttonStyle(.glassProminent)
-                        .tint(Color.brown)
-                    }
-                }
+                .toolbar(content: toolbarContenr)
                 .navigationBarTitleDisplayMode(.inline)
         }
     }
@@ -175,78 +161,21 @@ extension SettingsView {
     }
 }
 
-private struct SettingsCard<Content: View>: View {
-    // MARK: - Private Properties
-    
-    private let title: String
-    private let content: Content
-    
-    // MARK: - Init
-    
-    init(
-        title: String,
-        @ViewBuilder content: () -> Content
-    ) {
-        self.title = title
-        self.content = content()
-    }
-    
-    // MARK: - Body
+// MARK: - Toolbar Content
 
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(title)
-                .font(.headline)
+extension SettingsView {
+    @ToolbarContentBuilder
+    private func toolbarContenr() -> some ToolbarContent {
+        ToolbarItem(placement: .principal) {
+            Text("Settings")
+                .font(.system(size: 20, weight: .bold))
                 .foregroundColor(.white)
-                .padding(.horizontal, 16)
-            
-            VStack(spacing: 0) {
-                content
-            }
-            .background(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(.ultraThinMaterial.opacity(0.5))
+        }
+        ToolbarItem(placement: .topBarTrailing) {
+            Button(
+                "Done",
+                action: viewModel.dismissView
             )
-        }
-        .padding(.horizontal, 16)
-    }
-}
-
-private struct SettingsRow<RightView: View>: View {
-    // MARK: - Private Properties
-    
-    private let title: String
-    private let titleColor: Color?
-    private let right: RightView
-    
-    // MARK: - Init
-    
-    init(
-        title: String,
-        titleColor: Color? = .white,
-        @ViewBuilder right: () -> RightView
-    ) {
-        self.title = title
-        self.titleColor = titleColor
-        self.right = right()
-    }
-    
-    // MARK: - Body
-
-    var body: some View {
-        HStack {
-            Text(title)
-                .ifTrue(titleColor) { view, titleColor in
-                    view
-                        .foregroundStyle(titleColor)
-                }
-            Spacer()
-            right
-        }
-        .padding()
-        .overlay(alignment: .bottom) {
-            Divider()
-                .padding(.leading)
         }
     }
 }

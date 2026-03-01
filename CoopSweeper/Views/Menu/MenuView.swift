@@ -39,19 +39,7 @@ struct MenuView: View {
             .overlay(content: scrollableContent)
             .overlay(alignment: .bottom, content: startGameButton)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    gameHistoryButton
-                }
-                ToolbarItem(placement: .principal) {
-                    Text("CoopSweeper 💣")
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(Color(red: 0.3, green: 0.7, blue: 0.9))
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    settingsButton
-                }
-            }
+            .toolbar(content: toolbarContenr)
             .alert(
                 "Enter player name",
                 isPresented: $viewModel.presentPlayerNameChooser,
@@ -264,23 +252,13 @@ extension MenuView {
     private var gameHistoryButton: some View {
         Button(action: viewModel.presentGameHistoryView) {
             Image(systemName: "clock.arrow.trianglehead.counterclockwise.rotate.90")
-                .frame(width: 44, height: 44)
-                .foregroundColor(.white)
-                .font(.title2)
         }
-        .buttonStyle(.glassProminent)
-        .tint(.gray)
     }
     
     private var settingsButton: some View {
         Button(action: viewModel.presentSettingsView) {
             Image(systemName: "gear")
-                .frame(width: 44, height: 44)
-                .foregroundColor(.white)
-                .font(.title2)
         }
-        .buttonStyle(.glassProminent)
-        .tint(Color.brown)
     }
     
     private func selectePLayerNameAndStartGame() -> some View {
@@ -307,6 +285,25 @@ extension MenuView {
     }
 }
 
+// MARK: - Toolbar Content
+
+extension MenuView {
+    @ToolbarContentBuilder
+    private func toolbarContenr() -> some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            gameHistoryButton
+        }
+        ToolbarItem(placement: .principal) {
+            Text("CoopSweeper 💣")
+                .font(.system(size: 24, weight: .bold))
+                .foregroundColor(Color(red: 0.3, green: 0.7, blue: 0.9))
+        }
+        ToolbarItem(placement: .topBarTrailing) {
+            settingsButton
+        }
+    }
+}
+
 // MARK: - Preview
 
 #Preview {
@@ -318,62 +315,5 @@ extension MenuView {
             gameSettingsManager: GameSettingsManager()
         )
         MenuView(viewModel: viewModel)
-    }
-}
-
-// TODO: - Better solution
-
-extension View {
-    func readSize(onChange: @escaping (CGSize) -> Void) -> some View {
-        background(
-            GeometryReader { proxy in
-                Color.clear
-                    .preference(key: SizePreferenceKey.self, value: proxy.size)
-            }
-        )
-        .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
-    }
-}
-
-struct SizePreferenceKey: PreferenceKey {
-    static var defaultValue: CGSize = .zero
-
-    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
-        value = nextValue()
-    }
-}
-
-extension View {
-    func bottomFadeMask(height: CGFloat = 40) -> some View {
-        self.mask(
-            VStack(spacing: 0) {
-                Rectangle()
-                    .fill(Color.white)
-
-                LinearGradient(
-                    colors: [
-                        .white,
-                        .white.opacity(0)
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(height: height)
-            }
-        )
-    }
-}
-
-extension View {
-    @ViewBuilder
-    func ifTrue<T, Content: View>(
-        _ value: T?,
-        transform: (Self, T) -> Content
-    ) -> some View {
-        if let value {
-            transform(self, value)
-        } else {
-            self
-        }
     }
 }

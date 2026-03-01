@@ -28,18 +28,7 @@ struct GameHistoryView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .presentationDragIndicator(.visible)
                 .scrollDisabled(true) // Disable scroll if empty content
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button("Done", action: { dismiss() })
-                    }
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            showingClearConfirmation = true
-                        } label: {
-                            Label("Clear History", systemImage: "trash")
-                        }
-                    }
-                }
+                .toolbar(content: toolbarContenr)
                 .alert(
                     "Clear History",
                     isPresented: $showingClearConfirmation,
@@ -103,6 +92,24 @@ extension GameHistoryView {
                     color: isDarkModeOn ? .gray : .black, radius: 3
                 )
         )
+    }
+}
+
+// MARK: - Toolbar Content
+
+extension GameHistoryView {
+    @ToolbarContentBuilder
+    private func toolbarContenr() -> some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button("Done", action: { dismiss() })
+        }
+        ToolbarItem(placement: .topBarLeading) {
+            Button {
+                showingClearConfirmation = true
+            } label: {
+                Label("Clear History", systemImage: "trash")
+            }
+        }
     }
 }
 
