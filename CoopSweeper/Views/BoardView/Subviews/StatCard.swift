@@ -1,4 +1,13 @@
-private struct StatCard: View {
+//
+//  StatCard.swift
+//  CoopSweeper
+//
+//  Created by MikheilMuchaidze on 01.03.2026.
+//
+
+import SwiftUI
+
+struct StatCard: View {
     let icon: String
     let title: String
     let value: String

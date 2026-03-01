@@ -225,10 +225,12 @@ final class BoardViewModel: BoardViewModelProtocol {
     private func startTimer() {
         startTime = Date()
         elapsedTime = 0
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+        let newTimer = Timer(timeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self, let startTime = self.startTime else { return }
             self.elapsedTime = Date().timeIntervalSince(startTime)
         }
+        RunLoop.main.add(newTimer, forMode: .common)
+        timer = newTimer
     }
     
     private func stopTimer() {
@@ -237,12 +239,13 @@ final class BoardViewModel: BoardViewModelProtocol {
     }
     
     private func resumeTimer() {
-        // Adjust start time to account for elapsed time
         startTime = Date().addingTimeInterval(-elapsedTime)
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+        let newTimer = Timer(timeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self, let startTime = self.startTime else { return }
             self.elapsedTime = Date().timeIntervalSince(startTime)
         }
+        RunLoop.main.add(newTimer, forMode: .common)
+        timer = newTimer
     }
     
     private func resetTimer() {
