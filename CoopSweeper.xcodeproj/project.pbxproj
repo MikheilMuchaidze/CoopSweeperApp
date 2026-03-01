@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		24F1BB5B2F544FB100C5C284 /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 24F1BB5A2F544FB100C5C284 /* AsyncAlgorithms */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		2FC3CEE82DA2F9CA009139AD /* CoopSweeper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoopSweeper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				24F1BB5B2F544FB100C5C284 /* AsyncAlgorithms in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 			);
 			name = CoopSweeper;
 			packageProductDependencies = (
+				24F1BB5A2F544FB100C5C284 /* AsyncAlgorithms */,
 			);
 			productName = CoopSweeper;
 			productReference = 2FC3CEE82DA2F9CA009139AD /* CoopSweeper.app */;
@@ -107,6 +113,9 @@
 			);
 			mainGroup = 2FC3CEDF2DA2F9CA009139AD;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				24F1BB592F544FB100C5C284 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2FC3CEE92DA2F9CA009139AD /* Products */;
 			projectDirPath = "";
@@ -341,6 +350,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		24F1BB592F544FB100C5C284 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-async-algorithms.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		24F1BB5A2F544FB100C5C284 /* AsyncAlgorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 24F1BB592F544FB100C5C284 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
+			productName = AsyncAlgorithms;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2FC3CEE02DA2F9CA009139AD /* Project object */;
 }

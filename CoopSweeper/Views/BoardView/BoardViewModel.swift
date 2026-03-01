@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Combine
+import AsyncAlgorithms
 
 // MARK: - Interaction Mode
 
@@ -140,7 +140,7 @@ final class BoardViewModel: BoardViewModelProtocol {
     private let gameSettingsManager: GameSettingsManagerProtocol
     private var gameEngineManager: GameEngineManagerProtocol
     
-    private var timer: Timer?
+    private var timerTask: Task<Void, Never>?
     private var startTime: Date?
     
     // MARK: - Init
@@ -225,32 +225,32 @@ final class BoardViewModel: BoardViewModelProtocol {
     private func startTimer() {
         startTime = Date()
         elapsedTime = 0
-        let newTimer = Timer(timeInterval: 1.0, repeats: true) { [weak self] _ in
-            guard let self, let startTime = self.startTime else { return }
-            self.elapsedTime = Date().timeIntervalSince(startTime)
-        }
-        RunLoop.main.add(newTimer, forMode: .common)
-        timer = newTimer
+        scheduleTimerTask()
     }
     
     private func stopTimer() {
-        timer?.invalidate()
-        timer = nil
+        timerTask?.cancel()
+        timerTask = nil
     }
     
     private func resumeTimer() {
         startTime = Date().addingTimeInterval(-elapsedTime)
-        let newTimer = Timer(timeInterval: 1.0, repeats: true) { [weak self] _ in
-            guard let self, let startTime = self.startTime else { return }
-            self.elapsedTime = Date().timeIntervalSince(startTime)
-        }
-        RunLoop.main.add(newTimer, forMode: .common)
-        timer = newTimer
+        scheduleTimerTask()
     }
     
     private func resetTimer() {
         stopTimer()
         startTimer()
+    }
+    
+    private func scheduleTimerTask() {
+        timerTask?.cancel()
+        timerTask = Task { @MainActor [weak self] in
+            for await _ in AsyncTimerSequence(interval: .seconds(1), clock: .continuous) {
+                guard let self, let startTime = self.startTime else { return }
+                self.elapsedTime = Date().timeIntervalSince(startTime)
+            }
+        }
     }
     
     private func checkGameState() {
