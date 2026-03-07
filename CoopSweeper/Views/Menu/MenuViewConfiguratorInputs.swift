@@ -14,6 +14,7 @@ struct MenuViewConfiguratorInputs {
     let hapticFeedbackManager: HapticFeedbackManagerProtocol
     let appSettingsManager: AppSettingsManagerProtocol
     let gameSettingsManager: GameSettingsManagerProtocol
+    let gameHistoryManager: GameHistoryManagerProtocol
     
     // MARK: - Init
     
@@ -21,12 +22,14 @@ struct MenuViewConfiguratorInputs {
         coordinator: any CoordinatorProtocol,
         hapticFeedbackManager: HapticFeedbackManagerProtocol,
         appSettingsManager: AppSettingsManagerProtocol,
-        gameSettingsManager: GameSettingsManagerProtocol
+        gameSettingsManager: GameSettingsManagerProtocol,
+        gameHistoryManager: GameHistoryManagerProtocol
     ) {
         self.coordinator = coordinator
         self.hapticFeedbackManager = hapticFeedbackManager
         self.appSettingsManager = appSettingsManager
         self.gameSettingsManager = gameSettingsManager
+        self.gameHistoryManager = gameHistoryManager
     }
 }
 

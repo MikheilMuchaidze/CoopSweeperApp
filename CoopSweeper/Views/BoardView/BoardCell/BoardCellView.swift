@@ -12,15 +12,18 @@ struct BoardCellView: View {
 
     private let cellConfig: BoardCellViewConfig
     private let size: CGFloat
+    private let isDeathCell: Bool
 
     // MARK: - Init
 
     init(
         cellConfig: BoardCellViewConfig,
-        size: CGFloat
+        size: CGFloat,
+        isDeathCell: Bool = false
     ) {
         self.cellConfig = cellConfig
         self.size = size
+        self.isDeathCell = isDeathCell
     }
 
     // MARK: - Body
@@ -81,17 +84,22 @@ extension BoardCellView {
     }
     
     private var backgroundColor: Color {
+        if isDeathCell {
+            return Color(red: 0.5, green: 0.1, blue: 0.1)
+        }
         if cellConfig.isRevealed {
             if cellConfig.isMine {
                 return Color(red: 0.15, green: 0.2, blue: 0.25)
             }
             return Color(red: 0.08, green: 0.12, blue: 0.16)
         }
-        // Hidden cell - slightly lighter dark
         return Color(red: 0.2, green: 0.28, blue: 0.35)
     }
     
     private var borderColor: Color {
+        if isDeathCell {
+            return Color.red.opacity(0.8)
+        }
         if cellConfig.isRevealed {
             return Color.white.opacity(0.05)
         }
@@ -99,7 +107,7 @@ extension BoardCellView {
     }
     
     private var shadowColor: Color {
-        Color.black.opacity(0.3)
+        isDeathCell ? Color.red.opacity(0.5) : Color.black.opacity(0.3)
     }
 
     private var numberColor: Color {

@@ -308,11 +308,13 @@ extension MenuView {
 
 #Preview {
     NavigationStack {
+        let userDefaults = UserDefaults(suiteName: #file)!
         let viewModel = MenuViewModel(
             coordinator: Coordinator(),
             hapticFeedbackManager: HapticFeedbackManager(),
             appSettingsManager: AppSettingsManager(),
-            gameSettingsManager: GameSettingsManager()
+            gameSettingsManager: GameSettingsManager(),
+            gameHistoryManager: GameHistoryManager(userDefaults: userDefaults)
         )
         MenuView(viewModel: viewModel)
     }

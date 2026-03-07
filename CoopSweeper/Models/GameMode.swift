@@ -5,7 +5,7 @@
 //  Created by Mikheil Muchaidze on 08.04.25.
 //
 
-enum GameMode: String, CaseIterable, Identifiable {
+enum GameMode: String, CaseIterable, Identifiable, Codable {
     case local = "Local"
     case coop = "Coop"
     

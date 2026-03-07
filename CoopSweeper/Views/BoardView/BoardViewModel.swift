@@ -139,9 +139,17 @@ final class BoardViewModel: BoardViewModelProtocol {
     private let appSettingsManager: AppSettingsManagerProtocol
     private let gameSettingsManager: GameSettingsManagerProtocol
     private var gameEngineManager: GameEngineManagerProtocol
+    private let gameHistoryManager: GameHistoryManagerProtocol
     
     private var timerTask: Task<Void, Never>?
     private var startTime: Date?
+    private var didSaveResult: Bool = false
+    private var lastTappedRow: Int?
+    private var lastTappedColumn: Int?
+    
+    private let snapshotPlayerName: String
+    private let snapshotDifficulty: GameDifficulty
+    private let snapshotGameMode: GameMode
     
     // MARK: - Init
     
@@ -150,13 +158,18 @@ final class BoardViewModel: BoardViewModelProtocol {
         hapticFeedbackManager: HapticFeedbackManagerProtocol,
         appSettingsManager: AppSettingsManagerProtocol,
         gameSettingsManager: GameSettingsManagerProtocol,
-        gameEngineManager: GameEngineManagerProtocol
+        gameEngineManager: GameEngineManagerProtocol,
+        gameHistoryManager: GameHistoryManagerProtocol
     ) {
         self.coordinator = coordinator
         self.hapticFeedbackManager = hapticFeedbackManager
         self.appSettingsManager = appSettingsManager
         self.gameSettingsManager = gameSettingsManager
         self.gameEngineManager = gameEngineManager
+        self.gameHistoryManager = gameHistoryManager
+        self.snapshotPlayerName = gameSettingsManager.playerName
+        self.snapshotDifficulty = gameSettingsManager.difficulty
+        self.snapshotGameMode = gameSettingsManager.gameMode
     }
     
     // MARK: - Lifecycle
@@ -173,6 +186,9 @@ final class BoardViewModel: BoardViewModelProtocol {
     
     func handleCellTap(row: Int, column: Int) {
         guard !isPaused && !isGameOver && !isGameWon else { return }
+        
+        lastTappedRow = row
+        lastTappedColumn = column
         
         switch interactionMode {
         case .reveal:
@@ -191,6 +207,9 @@ final class BoardViewModel: BoardViewModelProtocol {
         gameEngineManager.resetGame()
         resetTimer()
         isPaused = false
+        didSaveResult = false
+        lastTappedRow = nil
+        lastTappedColumn = nil
         scale = 1.0
         lastScale = 1.0
         offset = .zero
@@ -256,10 +275,37 @@ final class BoardViewModel: BoardViewModelProtocol {
     private func checkGameState() {
         if isGameOver {
             stopTimer()
+            saveGameResult(won: false)
             hapticFeedbackManager.notification(type: .error)
         } else if isGameWon {
             stopTimer()
+            saveGameResult(won: true)
             hapticFeedbackManager.notification(type: .success)
         }
+    }
+    
+    private func saveGameResult(won: Bool) {
+        guard !didSaveResult else { return }
+        didSaveResult = true
+        
+        let minesFound = gameEngineManager.totalMines - gameEngineManager.remainingMines
+        let triggerRow = won ? nil : lastTappedRow
+        let triggerCol = won ? nil : lastTappedColumn
+        
+        let result = GameResultsModel(
+            playerName: snapshotPlayerName,
+            time: elapsedTime,
+            minesFound: minesFound,
+            totalMines: gameEngineManager.totalMines,
+            gameWon: won,
+            difficulty: snapshotDifficulty,
+            gameMode: snapshotGameMode,
+            boardWidth: gameEngineManager.columns,
+            boardHeight: gameEngineManager.rows,
+            finalBoard: gameEngineManager.cells,
+            triggerCellRow: triggerRow,
+            triggerCellColumn: triggerCol
+        )
+        gameHistoryManager.saveGame(result)
     }
 }

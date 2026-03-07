@@ -351,7 +351,8 @@ extension BoardView {
         hapticFeedbackManager: HapticFeedbackManager(),
         appSettingsManager: AppSettingsManager(),
         gameSettingsManager: GameSettingsManager(),
-        gameEngineManager: GameEngineManager(rows: 9, columns: 9, totalMines: 10)
+        gameEngineManager: GameEngineManager(rows: 9, columns: 9, totalMines: 10),
+        gameHistoryManager: GameHistoryManager()
     )
     BoardView(viewModel: viewModel)
 }

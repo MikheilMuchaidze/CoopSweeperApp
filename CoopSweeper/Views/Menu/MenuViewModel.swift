@@ -45,6 +45,7 @@ final class MenuViewModel: MenuViewModelProtocol {
     private let hapticFeedbackManager: HapticFeedbackManagerProtocol
     private let appSettingsManager: AppSettingsManagerProtocol
     private let gameSettingsManager: GameSettingsManagerProtocol
+    private let gameHistoryManager: GameHistoryManagerProtocol
     
     // MARK: - Shared Properties
     
@@ -58,7 +59,7 @@ final class MenuViewModel: MenuViewModelProtocol {
     var presentPlayerNameChooser = false {
         didSet {
             if presentPlayerNameChooser == false {
-                onAppear()
+                playerName = ""
             }
         }
     }
@@ -70,12 +71,14 @@ final class MenuViewModel: MenuViewModelProtocol {
         coordinator: any CoordinatorProtocol,
         hapticFeedbackManager: HapticFeedbackManagerProtocol,
         appSettingsManager: AppSettingsManagerProtocol,
-        gameSettingsManager: GameSettingsManagerProtocol
+        gameSettingsManager: GameSettingsManagerProtocol,
+        gameHistoryManager: GameHistoryManagerProtocol
     ) {
         self.coordinator = coordinator
         self.hapticFeedbackManager = hapticFeedbackManager
         self.appSettingsManager = appSettingsManager
         self.gameSettingsManager = gameSettingsManager
+        self.gameHistoryManager = gameHistoryManager
     }
     
     // MARK: - Methods
@@ -92,7 +95,10 @@ final class MenuViewModel: MenuViewModelProtocol {
     
     func presentGameHistoryView() {
         hapticFeedbackManager.selection()
-        coordinator.present(sheet: .gameHistoryView)
+        let inputs = GameHistoryViewConfiguratorInputs(
+            gameHistoryManager: gameHistoryManager
+        )
+        coordinator.present(sheet: .gameHistoryView(inputs: inputs))
     }
     
     func presentSettingsView() {
@@ -174,6 +180,7 @@ final class MenuViewModel: MenuViewModelProtocol {
     
     func startGame() {
         hapticFeedbackManager.notification(type: .success)
+        gameSettingsManager.updateGameSettings(with: .playerName(playerName))
         let boardViewInputs = BoardViewConfiguratorInputs(
             coordinator: coordinator,
             hapticFeedbackManager: hapticFeedbackManager,
@@ -183,7 +190,8 @@ final class MenuViewModel: MenuViewModelProtocol {
                 rows: gameSettingsManager.boardHeight,
                 columns: gameSettingsManager.boardWidth,
                 totalMines: gameSettingsManager.mineCount
-            )
+            ),
+            gameHistoryManager: gameHistoryManager
         )
         coordinator.navigate(to: .boardView(inputs: boardViewInputs))
     }

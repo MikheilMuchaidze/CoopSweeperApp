@@ -15,6 +15,7 @@ struct BoardViewConfiguratorInputs {
     let appSettingsManager: AppSettingsManagerProtocol
     let gameSettingsManager: GameSettingsManagerProtocol
     let gameEngineManager: GameEngineManagerProtocol
+    let gameHistoryManager: GameHistoryManagerProtocol
     
     // MARK: - Init
     
@@ -23,12 +24,14 @@ struct BoardViewConfiguratorInputs {
         hapticFeedbackManager: HapticFeedbackManagerProtocol,
         appSettingsManager: AppSettingsManagerProtocol,
         gameSettingsManager: GameSettingsManagerProtocol,
-        gameEngineManager: GameEngineManagerProtocol
+        gameEngineManager: GameEngineManagerProtocol,
+        gameHistoryManager: GameHistoryManagerProtocol
     ) {
         self.coordinator = coordinator
         self.hapticFeedbackManager = hapticFeedbackManager
         self.appSettingsManager = appSettingsManager
         self.gameSettingsManager = gameSettingsManager
         self.gameEngineManager = gameEngineManager
+        self.gameHistoryManager = gameHistoryManager
     }
 }

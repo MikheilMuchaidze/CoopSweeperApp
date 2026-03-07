@@ -11,7 +11,7 @@ enum NavigationSheets: NavigationPathProtocol {
     case gameModeHintView
     case gameDifficultyHintView
     case settingsView(inputs: SettingsConfiguratorInputs)
-    case gameHistoryView
+    case gameHistoryView(inputs: GameHistoryViewConfiguratorInputs)
 
     var id: String {
         switch self {
@@ -36,7 +36,11 @@ enum NavigationSheets: NavigationPathProtocol {
                     appSettingsManager: AppSettingsManager()
                 )
             ),
-            .gameHistoryView
+            .gameHistoryView(
+                inputs: GameHistoryViewConfiguratorInputs(
+                    gameHistoryManager: GameHistoryManager()
+                )
+            )
         ]
     }
 }

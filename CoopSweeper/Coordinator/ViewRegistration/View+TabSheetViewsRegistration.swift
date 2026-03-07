@@ -25,8 +25,10 @@ extension View {
                     SettingsViewConfigurator.configureView(
                         inputs: settingsViewInputs
                     )
-                case .gameHistoryView:
-                    GameHistoryView()
+                case let .gameHistoryView(inputs):
+                    GameHistoryViewConfigurator.configureView(
+                        inputs: inputs
+                    )
                 }
 
             default:

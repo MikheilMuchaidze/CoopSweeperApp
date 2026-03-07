@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum BoardCellState {
+enum BoardCellState: String, Codable {
     case hidden
     case revealed
     case flagged

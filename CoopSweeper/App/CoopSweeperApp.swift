@@ -18,6 +18,7 @@ struct CoopSweeperApp: App {
     private let hapticFeedbackManager: HapticFeedbackManagerProtocol
     private let appSettingsManager: AppSettingsManagerProtocol
     private let gameSettingsManager: GameSettingsManagerProtocol
+    private let gameHistoryManager: GameHistoryManagerProtocol
     
     // MARK: - Init
     
@@ -26,6 +27,7 @@ struct CoopSweeperApp: App {
         self.hapticFeedbackManager = HapticFeedbackManager()
         self.appSettingsManager = AppSettingsManager()
         self.gameSettingsManager = GameSettingsManager()
+        self.gameHistoryManager = GameHistoryManager()
     }
 
     // MARK: - Body
@@ -38,7 +40,8 @@ struct CoopSweeperApp: App {
                         coordinator: coordinator,
                         hapticFeedbackManager: hapticFeedbackManager,
                         appSettingsManager: appSettingsManager,
-                        gameSettingsManager: gameSettingsManager
+                        gameSettingsManager: gameSettingsManager,
+                        gameHistoryManager: gameHistoryManager
                     )
                 )
                     .registerViewsFor(navigationPaths: NavigationRoutes.allCases)

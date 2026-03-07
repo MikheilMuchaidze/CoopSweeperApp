@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct BoardCellViewConfig: Identifiable {
-    let id = UUID()
+struct BoardCellViewConfig: Identifiable, Codable {
+    let id: UUID
     let row: Int
     let column: Int
     var isMine: Bool
@@ -21,5 +21,21 @@ struct BoardCellViewConfig: Identifiable {
 
     var isFlagged: Bool {
         state == .flagged
+    }
+
+    init(
+        id: UUID = UUID(),
+        row: Int,
+        column: Int,
+        isMine: Bool,
+        state: BoardCellState,
+        adjacentMines: Int
+    ) {
+        self.id = id
+        self.row = row
+        self.column = column
+        self.isMine = isMine
+        self.state = state
+        self.adjacentMines = adjacentMines
     }
 }

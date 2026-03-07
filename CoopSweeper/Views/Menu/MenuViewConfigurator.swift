@@ -15,7 +15,8 @@ enum MenuViewConfigurator {
             coordinator: inputs.coordinator,
             hapticFeedbackManager: inputs.hapticFeedbackManager,
             appSettingsManager: inputs.appSettingsManager,
-            gameSettingsManager: inputs.gameSettingsManager
+            gameSettingsManager: inputs.gameSettingsManager,
+            gameHistoryManager: inputs.gameHistoryManager
         )
         
         let menuView = MenuView(viewModel: menuViewModel)
