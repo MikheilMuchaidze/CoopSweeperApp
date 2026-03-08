@@ -9,4 +9,5 @@ enum AppSettingsUpdate {
     case sound(isOn: Bool)
     case vibrationEnabled(isOn: Bool)
     case theme(type: AppTheme)
+    case longPressDuration(milliseconds: Int)
 }

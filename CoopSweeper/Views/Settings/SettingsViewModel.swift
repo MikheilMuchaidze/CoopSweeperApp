@@ -21,6 +21,8 @@ protocol SettingsViewModelProtocol {
     func updateVibrationSetting(with newValue: Bool)
     func getCurrentThemeSetting() -> AppTheme
     func updateCurrentThemeSetting(with newValue: AppTheme)
+    func getLongPressDurationMs() -> Int
+    func updateLongPressDurationMs(with newValue: Int)
 }
 
 @Observable
@@ -109,6 +111,18 @@ final class SettingsViewModel: SettingsViewModelProtocol {
         appSettingsManager.updateSettings(
             with: .theme(
                 type: newValue
+            )
+        )
+    }
+    
+    func getLongPressDurationMs() -> Int {
+        appSettingsManager.longPressDurationMs
+    }
+    
+    func updateLongPressDurationMs(with newValue: Int) {
+        appSettingsManager.updateSettings(
+            with: .longPressDuration(
+                milliseconds: newValue
             )
         )
     }

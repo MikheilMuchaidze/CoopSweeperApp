@@ -21,6 +21,7 @@ protocol GameEngineManagerProtocol {
 
     func revealCell(row: Int, column: Int)
     func toggleFlag(row: Int, column: Int)
+    @discardableResult func chordReveal(row: Int, column: Int) -> Bool
     func resetGame()
 }
 
@@ -182,6 +183,36 @@ final class GameEngineManager: GameEngineManagerProtocol {
         }
 
         checkWinCondition()
+    }
+
+    @discardableResult
+    func chordReveal(row: Int, column: Int) -> Bool {
+        guard !gameOver && !gameWon else { return false }
+        guard row >= 0 && row < rows && column >= 0 && column < columns else { return false }
+
+        let cell = cells[row][column]
+        guard cell.isRevealed && !cell.isMine && cell.adjacentMines > 0 else { return false }
+
+        var adjacentFlags = 0
+        for r in max(0, row-1)...min(rows-1, row+1) {
+            for c in max(0, column-1)...min(columns-1, column+1) {
+                if cells[r][c].isFlagged {
+                    adjacentFlags += 1
+                }
+            }
+        }
+
+        guard adjacentFlags == cell.adjacentMines else { return false }
+
+        for r in max(0, row-1)...min(rows-1, row+1) {
+            for c in max(0, column-1)...min(columns-1, column+1) {
+                if cells[r][c].state == .hidden {
+                    revealCell(row: r, column: c)
+                    if gameOver { return true }
+                }
+            }
+        }
+        return true
     }
 
     func resetGame() {

@@ -25,6 +25,9 @@ enum CellInteractionMode: String, CaseIterable {
 // MARK: - Protocol
 
 protocol BoardViewModelProtocol: AnyObject {
+    // Player
+    var playerName: String { get }
+    
     // Game State
     var cells: [[BoardCellViewConfig]] { get }
     var rows: Int { get }
@@ -51,10 +54,14 @@ protocol BoardViewModelProtocol: AnyObject {
     // Cell Size
     var cellSize: CGFloat { get }
     
+    // Long Press
+    var longPressDuration: Double { get }
+    
     // Actions
     func onAppear()
     func onDisappear()
     func handleCellTap(row: Int, column: Int)
+    func handleCellLongPress(row: Int, column: Int)
     func resetGame()
     func quitGame()
     func togglePause()
@@ -65,6 +72,12 @@ protocol BoardViewModelProtocol: AnyObject {
 
 @Observable
 final class BoardViewModel: BoardViewModelProtocol {
+    // MARK: - Player
+    
+    var playerName: String {
+        snapshotPlayerName
+    }
+    
     // MARK: - Game State
     
     var cells: [[BoardCellViewConfig]] {
@@ -132,6 +145,12 @@ final class BoardViewModel: BoardViewModelProtocol {
         return baseSize
     }
     
+    // MARK: - Long Press
+    
+    var longPressDuration: Double {
+        Double(appSettingsManager.longPressDurationMs) / 1000.0
+    }
+    
     // MARK: - Private Properties
     
     private var coordinator: any CoordinatorProtocol
@@ -187,6 +206,22 @@ final class BoardViewModel: BoardViewModelProtocol {
     func handleCellTap(row: Int, column: Int) {
         guard !isPaused && !isGameOver && !isGameWon else { return }
         
+        let cell = cells[row][column]
+        
+        if cell.isRevealed && !cell.isMine && cell.adjacentMines > 0 {
+            lastTappedRow = row
+            lastTappedColumn = column
+            
+            let didReveal = gameEngineManager.chordReveal(row: row, column: column)
+            if didReveal {
+                hapticFeedbackManager.notification(type: .success)
+            } else {
+                hapticFeedbackManager.notification(type: .warning)
+            }
+            checkGameState()
+            return
+        }
+        
         lastTappedRow = row
         lastTappedColumn = column
         
@@ -199,6 +234,14 @@ final class BoardViewModel: BoardViewModelProtocol {
             hapticFeedbackManager.impact(style: .medium)
         }
         
+        checkGameState()
+    }
+    
+    func handleCellLongPress(row: Int, column: Int) {
+        guard !isPaused && !isGameOver && !isGameWon else { return }
+        
+        gameEngineManager.toggleFlag(row: row, column: column)
+        hapticFeedbackManager.impact(style: .medium)
         checkGameState()
     }
     

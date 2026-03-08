@@ -71,6 +71,28 @@ extension SettingsView {
                 .pickerStyle(.menu)
                 .tint(Color(red: 0.3, green: 0.7, blue: 0.9))
             }
+
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text("Long Press Duration")
+                        .foregroundColor(.white)
+                    Spacer()
+                    Text("\(viewModel.getLongPressDurationMs())ms")
+                        .foregroundColor(Color(red: 0.3, green: 0.7, blue: 0.9))
+                        .monospacedDigit()
+                }
+
+                Slider(
+                    value: .init(
+                        get: { Double(viewModel.getLongPressDurationMs()) },
+                        set: { viewModel.updateLongPressDurationMs(with: Int($0)) }
+                    ),
+                    in: 100...500,
+                    step: 50
+                )
+                .tint(Color(red: 0.3, green: 0.7, blue: 0.9))
+            }
+            .padding()
         }
     }
 

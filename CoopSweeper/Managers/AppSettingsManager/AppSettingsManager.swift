@@ -11,6 +11,7 @@ protocol AppSettingsManagerProtocol {
     var soundEnabled: Bool { get }
     var vibrationEnabled: Bool { get }
     var theme: AppTheme { get }
+    var longPressDurationMs: Int { get }
 
     func updateSettings(with update: AppSettingsUpdate)
 }
@@ -23,6 +24,7 @@ final class AppSettingsManager: AppSettingsManagerProtocol {
     @ObservationIgnored @AppStorage("soundEnabled") var soundEnabledFromStorage: Bool = true
     @ObservationIgnored @AppStorage("vibrationEnabled") var vibrationEnabledFromStorage: Bool = true
     @ObservationIgnored @AppStorage("activeTheme") var activeThemeFromStorage: String = AppTheme.system.rawValue
+    @ObservationIgnored @AppStorage("longPressDurationMs") var longPressDurationMsFromStorage: Int = 300
 
     // MARK: - Publised Properties
 
@@ -44,16 +46,24 @@ final class AppSettingsManager: AppSettingsManagerProtocol {
         }
     }
 
+    var longPressDurationMs: Int {
+        didSet {
+            longPressDurationMsFromStorage = longPressDurationMs
+        }
+    }
+
     // MARK: - Init
 
     init(
         soundEnabled: Bool = true,
         vibrationEnabled: Bool = true,
-        theme: AppTheme = .system
+        theme: AppTheme = .system,
+        longPressDurationMs: Int = 300
     ) {
         self.soundEnabled = soundEnabled
         self.vibrationEnabled = vibrationEnabled
         self.theme = theme
+        self.longPressDurationMs = longPressDurationMs
         updateSettingsWithSavedOnes()
     }
 
@@ -63,6 +73,7 @@ final class AppSettingsManager: AppSettingsManagerProtocol {
         soundEnabled = soundEnabledFromStorage
         vibrationEnabled = vibrationEnabledFromStorage
         theme = AppTheme(rawValue: activeThemeFromStorage) ?? .system
+        longPressDurationMs = longPressDurationMsFromStorage
     }
 
     // MARK: - Methods
@@ -75,6 +86,8 @@ final class AppSettingsManager: AppSettingsManagerProtocol {
             vibrationEnabled = isOn
         case let .theme(type):
             theme = type
+        case let .longPressDuration(milliseconds):
+            longPressDurationMs = min(max(milliseconds, 100), 500)
         }
     }
 }
@@ -87,5 +100,6 @@ extension AppSettingsManager: Equatable {
         lhs.soundEnabled == rhs.soundEnabled
         && lhs.vibrationEnabled == rhs.vibrationEnabled
         && lhs.theme == rhs.theme
+        && lhs.longPressDurationMs == rhs.longPressDurationMs
     }
 }

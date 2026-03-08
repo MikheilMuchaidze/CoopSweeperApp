@@ -45,10 +45,15 @@ struct BoardView: View {
 extension BoardView {
     private func mainContent() -> some View {
         VStack(spacing: 0) {
+            // Player Name
+            playerNameBadge
+                .padding(.horizontal, 20)
+                .padding(.top, 12)
+            
             // Top Stats Bar
             topStatsBar
                 .padding(.horizontal, 20)
-                .padding(.top, 16)
+                .padding(.top, 12)
                 .padding(.bottom, 24)
             
             // Game Board
@@ -61,6 +66,33 @@ extension BoardView {
                 .padding(.horizontal, 20)
                 .padding(.bottom, 24)
         }
+    }
+}
+
+// MARK: - Player Name Badge
+
+extension BoardView {
+    private var playerNameBadge: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "person.fill")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(Color(red: 0.3, green: 0.7, blue: 0.9))
+            
+            Text(viewModel.playerName)
+                .font(.system(size: 16, weight: .semibold, design: .rounded))
+                .foregroundColor(.white)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(.ultraThinMaterial.opacity(0.5))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(Color(red: 0.3, green: 0.7, blue: 0.9).opacity(0.3), lineWidth: 1)
+        )
     }
 }
 
@@ -126,9 +158,18 @@ extension BoardView {
                             cellConfig: viewModel.cells[row][column],
                             size: viewModel.cellSize
                         )
-                        .onTapGesture {
-                            viewModel.handleCellTap(row: row, column: column)
-                        }
+                        .gesture(
+                            LongPressGesture(minimumDuration: viewModel.longPressDuration)
+                                .onEnded { _ in
+                                    viewModel.handleCellLongPress(row: row, column: column)
+                                }
+                        )
+                        .simultaneousGesture(
+                            TapGesture()
+                                .onEnded {
+                                    viewModel.handleCellTap(row: row, column: column)
+                                }
+                        )
                     }
                 }
             }
